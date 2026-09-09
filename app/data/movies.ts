@@ -53,11 +53,6 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Poor Things',
-    img: 'https://image.tmdb.org/t/p/w500/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg',
-    opts: {},
-  },
-  {
     name: 'Inception',
     img: 'https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',
     opts: {},
@@ -115,11 +110,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'Fantastic Mr. Fox',
     img: 'https://image.tmdb.org/t/p/w500/bOVr292mwn3jxr1e0NmUPM1rcjo.jpg',
-    opts: {},
-  },
-  {
-    name: 'Jojo Rabbit',
-    img: 'https://image.tmdb.org/t/p/w500/7GsM4mtM0worCtIVeiQt28HieeN.jpg',
     opts: {},
   },
   {
@@ -270,11 +260,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'The Departed',
     img: 'https://image.tmdb.org/t/p/w500/nT97ifVT2J1yMQmeq20Qblg61T.jpg',
-    opts: {},
-  },
-  {
-    name: 'The Nightmare Before Christmas',
-    img: 'https://image.tmdb.org/t/p/w500/oQffRNjK8e19rF7xVYEN8ew0j7b.jpg',
     opts: {},
   },
   {
@@ -710,11 +695,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'Red Rooms',
     img: 'https://image.tmdb.org/t/p/w500/uBJvbf0g9rcsYElcwZCMYU0Vrj8.jpg',
-    opts: {},
-  },
-  {
-    name: 'The Conversation',
-    img: 'https://image.tmdb.org/t/p/w500/dHqVBwcv1SGymOpUueRoKzcmdes.jpg',
     opts: {},
   },
   {

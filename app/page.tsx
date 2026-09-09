@@ -23,7 +23,7 @@ import { Progress } from '@/components/ui/progress';
 import { movies, type Movie } from '@/app/data/movies';
 
 const SAVE_KEY = 'movie-sorter-progress-v2';
-const DATA_VERSION = '2026-09-09';
+const DATA_VERSION = '2026-09-09-2';
 const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 type SortState = {
@@ -648,6 +648,15 @@ export default function Home() {
 
   if (state.result) {
     const groups = buildResultGroups(state, byId);
+    const rankedMovies = groups.flatMap((group) =>
+      group.movies.map((movie, movieIndex) => ({
+        movie,
+        rank: movieIndex === 0 ? String(group.rank) : '=',
+        tied: group.movies.length > 1,
+      })),
+    );
+    const showcaseMovies = rankedMovies.slice(0, 12);
+    const remainingMovies = rankedMovies.slice(12);
     return (
       <main className="site-shell results-view">
         <header className="site-header">
@@ -679,32 +688,39 @@ export default function Home() {
           </div>
         </section>
 
-        <ol className="ranking-list">
-          {groups.map((group) =>
-            group.movies.map((movie, movieIndex) => (
-              <li
-                className={`ranking-row ${group.rank <= 3 ? 'top-rank' : ''}`}
-                key={movie.id}
-              >
-                <span className="rank-number">
-                  {movieIndex === 0 ? group.rank : '='}
-                </span>
+        <section className="ranking-board" aria-label="Complete movie ranking">
+          <ol className="ranking-showcase">
+            {showcaseMovies.map(({ movie, rank, tied }) => (
+              <li className="ranking-card" key={movie.id}>
                 <Image
                   src={movie.poster}
                   alt=""
-                  width={52}
-                  height={68}
+                  width={220}
+                  height={330}
                   unoptimized
                   loading="lazy"
                 />
-                <span className="rank-title">{movie.title}</span>
-                {group.movies.length > 1 && (
-                  <span className="tie-label">Tie</span>
-                )}
+                <div className="ranking-card-copy">
+                  <span className="showcase-rank">{rank}</span>
+                  <span className="showcase-title">{movie.title}</span>
+                  {tied && <span className="showcase-tie">Tie</span>}
+                </div>
               </li>
-            )),
+            ))}
+          </ol>
+
+          {remainingMovies.length > 0 && (
+            <ol className="ranking-columns" start={13}>
+              {remainingMovies.map(({ movie, rank, tied }) => (
+                <li className="ranking-compact-row" key={movie.id}>
+                  <span className="compact-rank">{rank}</span>
+                  <span className="compact-title">{movie.title}</span>
+                  {tied && <span className="compact-tie">Tie</span>}
+                </li>
+              ))}
+            </ol>
           )}
-        </ol>
+        </section>
 
         <footer className="results-footer">
           <p>Your ranking is only stored on this device until you copy it.</p>
