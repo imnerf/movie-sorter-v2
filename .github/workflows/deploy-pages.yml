@@ -40,6 +40,9 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /movie-sorter-v2
 
+      - name: Preserve Next.js assets on Pages
+        run: touch dist/client/.nojekyll
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
