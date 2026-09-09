@@ -23,7 +23,8 @@ import { Progress } from '@/components/ui/progress';
 import { movies, type Movie } from '@/app/data/movies';
 
 const SAVE_KEY = 'movie-sorter-progress-v2';
-const DATA_VERSION = '2026-01-30';
+const DATA_VERSION = '2026-09-09';
+const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 type SortState = {
   pending: string[][];
@@ -496,7 +497,7 @@ export default function Home() {
           </a>
           <a
             className="header-link"
-            href="https://github.com/imnerf/movie-sorter"
+            href="https://github.com/imnerf/movie-sorter-v2"
             target="_blank"
             rel="noreferrer"
           >
@@ -507,7 +508,7 @@ export default function Home() {
         <section id="top" className="home-hero" aria-labelledby="hero-title">
           <div className="portrait portrait-left" aria-hidden="true">
             <Image
-              src="/brand/taxi-driver.jpg"
+              src={`${ASSET_PREFIX}/brand/taxi-driver.jpg`}
               alt=""
               fill
               sizes="32vw"
@@ -549,7 +550,13 @@ export default function Home() {
           </div>
 
           <div className="portrait portrait-right" aria-hidden="true">
-            <Image src="/brand/tar.jpg" alt="" fill sizes="32vw" priority />
+            <Image
+              src={`${ASSET_PREFIX}/brand/tar.jpg`}
+              alt=""
+              fill
+              sizes="32vw"
+              priority
+            />
           </div>
         </section>
 
@@ -593,7 +600,7 @@ export default function Home() {
         <footer className="site-footer">
           <div className="footer-links">
             <a
-              href="https://github.com/imnerf/movie-sorter"
+              href="https://github.com/imnerf/movie-sorter-v2"
               target="_blank"
               rel="noreferrer"
             >
@@ -621,7 +628,7 @@ export default function Home() {
               rel="noreferrer"
             >
               <Image
-                src="/brand/tmdb.svg"
+                src={`${ASSET_PREFIX}/brand/tmdb.svg`}
                 alt="The Movie Database"
                 width={90}
                 height={40}
@@ -633,7 +640,7 @@ export default function Home() {
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · September 8, 2026</p>
+          <p className="last-updated">Latest update · September 9, 2026</p>
         </footer>
       </main>
     );

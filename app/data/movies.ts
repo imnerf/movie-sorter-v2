@@ -18,7 +18,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Everything Everywhere All At Once',
+    name: 'Everything Everywhere All at Once',
     img: 'https://image.tmdb.org/t/p/w500/u68AjlvlutfEIcpmbYpKcdi09ut.jpg',
     opts: {},
   },
@@ -38,7 +38,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Into the Spiderverse',
+    name: 'Spider-Man: Into the Spider-Verse',
     img: 'https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg',
     opts: {},
   },
@@ -63,12 +63,12 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Across the Spiderverse',
+    name: 'Spider-Man: Across the Spider-Verse',
     img: 'https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
     opts: {},
   },
   {
-    name: 'Dune Part Two',
+    name: 'Dune: Part Two',
     img: 'https://image.tmdb.org/t/p/w500/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg',
     opts: {},
   },
@@ -93,7 +93,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Inglorious Basterds',
+    name: 'Inglourious Basterds',
     img: 'https://image.tmdb.org/t/p/w500/7sfbEnaARXDDhKm0CZ7D7uc2sbo.jpg',
     opts: {},
   },
@@ -104,7 +104,7 @@ const movieSeeds: MovieSeed[] = [
   },
   {
     name: 'The Godfather',
-    img: 'https://image.tmdb.org/t/p/w500/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg',
+    img: 'https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg',
     opts: {},
   },
   {
@@ -113,8 +113,8 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Fantastic Mr Fox',
-    img: 'https://image.tmdb.org/t/p/w500/njbTizADSZg4PqeyJdDzZGooikv.jpg',
+    name: 'Fantastic Mr. Fox',
+    img: 'https://image.tmdb.org/t/p/w500/bOVr292mwn3jxr1e0NmUPM1rcjo.jpg',
     opts: {},
   },
   {
@@ -148,7 +148,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: "It's A Wonderful Life",
+    name: "It's a Wonderful Life",
     img: 'https://image.tmdb.org/t/p/original/bSqt9rhDZx1Q7UZ86dBPKdNomp2.jpg',
     opts: {},
   },
@@ -168,7 +168,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'WALL-E',
+    name: 'WALL·E',
     img: 'https://image.tmdb.org/t/p/original/hbhFnRzzg6ZDmm8YAmxBnQpQIPh.jpg',
     opts: {},
   },
@@ -203,7 +203,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Prisoner of Azkaban',
+    name: 'Harry Potter and the Prisoner of Azkaban',
     img: 'https://image.tmdb.org/t/p/w500/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg',
     opts: {},
   },
@@ -303,7 +303,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Pan’s Labyrinth',
+    name: "Pan's Labyrinth",
     img: 'https://image.tmdb.org/t/p/w500/2VVhikIxoztAXEDQZLOdtBsu6vf.jpg',
     opts: {},
   },
@@ -323,8 +323,8 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'The Godfather Part 2',
-    img: 'https://image.tmdb.org/t/p/w500/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg',
+    name: 'The Godfather Part II',
+    img: 'https://image.tmdb.org/t/p/w500/sSuQTCZwqKrNBNIsksO9IAUoWP9.jpg',
     opts: {},
   },
   {
@@ -373,8 +373,8 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Dune Part One',
-    img: 'https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg',
+    name: 'Dune',
+    img: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
     opts: {},
   },
   {
@@ -388,7 +388,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Do The Right Thing',
+    name: 'Do the Right Thing',
     img: 'https://image.tmdb.org/t/p/original/5HLbsqpJ2VOFvnaMnghRQVZKaV4.jpg',
     opts: {},
   },
@@ -398,7 +398,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'The Wolf Of Wall Street',
+    name: 'The Wolf of Wall Street',
     img: 'https://image.tmdb.org/t/p/w500/kW9LmvYHAaS9iA0tHmZVq8hQYoq.jpg',
     opts: {},
   },
@@ -448,7 +448,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'The Lord of The Rings: The Fellowship of the Ring',
+    name: 'The Lord of the Rings: The Fellowship of the Ring',
     img: 'https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg',
     opts: {},
   },
@@ -468,7 +468,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: "Singin' In the Rain",
+    name: "Singin' in the Rain",
     img: 'https://image.tmdb.org/t/p/original/w03EiJVHP8Un77boQeE7hg9DVdU.jpg',
     opts: {},
   },
@@ -568,12 +568,12 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Dr. Stranglelove',
-    img: 'https://image.tmdb.org/t/p/w500/6x7MzQ6BOMlRzam1StcmPO9v61g.jpg',
+    name: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
+    img: 'https://image.tmdb.org/t/p/w500/gHm96BRW4GoI339rF1vYoYTB6Qe.jpg',
     opts: {},
   },
   {
-    name: 'LOTR: The Return of the King',
+    name: 'The Lord of the Rings: The Return of the King',
     img: 'https://image.tmdb.org/t/p/w500/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg',
     opts: {},
   },
@@ -623,7 +623,7 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Stand By Me',
+    name: 'Stand by Me',
     img: 'https://image.tmdb.org/t/p/original/7QbJa6syM4ZYxtey0d7qB7bmhzb.jpg',
     opts: {},
   },
@@ -655,6 +655,81 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'No Country for Old Men',
     img: 'https://image.tmdb.org/t/p/w500/bj1v6YKF8yHqA489VFfnQvOJpnc.jpg',
+    opts: {},
+  },
+  {
+    name: 'The Odyssey',
+    img: 'https://image.tmdb.org/t/p/w500/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg',
+    opts: {},
+  },
+  {
+    name: 'Sing Sing',
+    img: 'https://image.tmdb.org/t/p/w500/ig5ju3Tt56UGoBrc6IlkUS6ahfE.jpg',
+    opts: {},
+  },
+  {
+    name: 'Phantom Thread',
+    img: 'https://image.tmdb.org/t/p/w500/hgoWjp9Sh0MI97eAMZCnIoVfgvq.jpg',
+    opts: {},
+  },
+  {
+    name: 'Sentimental Value',
+    img: 'https://image.tmdb.org/t/p/w500/pz9NCWxxOk3o0W3v1Zkhawrwb4i.jpg',
+    opts: {},
+  },
+  {
+    name: 'The Florida Project',
+    img: 'https://image.tmdb.org/t/p/w500/5QnDxdJg1fi6uMSkSi4x8tHsltm.jpg',
+    opts: {},
+  },
+  {
+    name: 'The Battle of Algiers',
+    img: 'https://image.tmdb.org/t/p/w500/2p3AFtOHFvP6OeVMqlnL1zLKOqL.jpg',
+    opts: {},
+  },
+  {
+    name: 'Le Trou',
+    img: 'https://image.tmdb.org/t/p/w500/xyZhiOz5NHVBUKlpioxjwajy7pm.jpg',
+    opts: {},
+  },
+  {
+    name: 'Being John Malkovich',
+    img: 'https://image.tmdb.org/t/p/w500/31FGQu3OnwdmS4COquENe0vMZc0.jpg',
+    opts: {},
+  },
+  {
+    name: 'Argo',
+    img: 'https://image.tmdb.org/t/p/w500/m5gPWFZFIp4UJFABgWyLkbXv8GX.jpg',
+    opts: {},
+  },
+  {
+    name: 'La La Land',
+    img: 'https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg',
+    opts: {},
+  },
+  {
+    name: 'Red Rooms',
+    img: 'https://image.tmdb.org/t/p/w500/uBJvbf0g9rcsYElcwZCMYU0Vrj8.jpg',
+    opts: {},
+  },
+  {
+    name: 'The Conversation',
+    img: 'https://image.tmdb.org/t/p/w500/dHqVBwcv1SGymOpUueRoKzcmdes.jpg',
+    opts: {},
+  },
+  {
+    name: 'Sinners',
+    img: 'https://image.tmdb.org/t/p/w500/fWPgbnt2LSqkQ6cdQc0SZN9CpLm.jpg',
+    opts: {},
+  },
+  {
+    name: 'Hamnet',
+    img: 'https://image.tmdb.org/t/p/w500/vbeyOZm2bvBXcbgPD3v6o94epPX.jpg',
+    opts: {},
+  },
+  {
+    name: 'The Fabelmans',
+    img: 'https://image.tmdb.org/t/p/w500/h7llKkqkkJtJrTOaDLuVeUYDQ7I.jpg',
     opts: {},
   },
 ];

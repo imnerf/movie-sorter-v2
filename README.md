@@ -20,6 +20,16 @@ Add or remove entries in that array, then update `DATA_VERSION` in `app/page.tsx
 pnpm dev
 ```
 
+## Publishing
+
+Pushes to `main` automatically build and deploy the site with GitHub Pages.
+The Pages build prefixes its static assets with `/movie-sorter-v2`; OpenAI
+Sites and local development continue to serve assets from `/`.
+
+A custom domain can be added later under **Repository settings → Pages**. Add
+the domain in GitHub before changing its DNS records, then enable HTTPS after
+the domain is verified.
+
 ## Features
 
 - Head-to-head merge sorting
