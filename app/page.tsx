@@ -633,7 +633,7 @@ export default function Home() {
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · January 30, 2026</p>
+          <p className="last-updated">Latest update · September 8, 2026</p>
         </footer>
       </main>
     );
