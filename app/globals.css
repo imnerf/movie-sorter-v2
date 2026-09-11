@@ -2,6 +2,30 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('./assets/fonts/archivo-black-latin.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Grenze Gotisch';
+  src: url('./assets/fonts/grenze-gotisch-latin.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600 800;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('./assets/fonts/instrument-serif-italic-latin.woff2') format('woff2');
+  font-display: swap;
+  font-style: italic;
+  font-weight: 400;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -133,9 +157,62 @@ a {
   text-transform: uppercase;
 }
 
-.wordmark svg {
-  width: 1.15rem;
+.screen-ranking-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--foreground);
+  line-height: 0.88;
+  white-space: nowrap;
+}
+
+.screen-ranking-wordmark--primary {
+  gap: 0.34em;
+  font-family: 'Archivo Black', Impact, sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.screen-ranking-wordmark--primary .wordmark-cut {
   color: var(--primary);
+  font-size: 1.18em;
+  transform: skewX(-8deg);
+}
+
+.screen-ranking-wordmark--gothic {
+  gap: 0.16em;
+  font-family: 'Grenze Gotisch', Georgia, serif;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.screen-ranking-wordmark--gothic .wordmark-cut {
+  color: var(--primary);
+  font-family: 'Archivo Black', Impact, sans-serif;
+  font-size: 0.8em;
+}
+
+.screen-ranking-wordmark--editorial {
+  gap: 0.2em;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.1em;
+  font-style: italic;
+  letter-spacing: -0.045em;
+}
+
+.screen-ranking-wordmark--editorial .wordmark-screen {
+  font-family: var(--font-sans);
+  font-size: 0.37em;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  transform: translateY(-0.24em);
+}
+
+.screen-ranking-wordmark--editorial .wordmark-cut {
+  display: none;
 }
 
 .wordmark-button {
@@ -164,6 +241,193 @@ a {
 .header-link svg,
 .footer-links svg {
   width: 0.9rem;
+}
+
+.brand-lab {
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 86% 0%, rgb(128 40 29 / 20%), transparent 34rem),
+    linear-gradient(rgb(255 255 255 / 2%) 1px, transparent 1px),
+    var(--background);
+  background-size: auto, 100% 6rem, auto;
+}
+
+.brand-lab-header {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding: 0 3.5vw;
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brand-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 160ms ease;
+}
+
+.brand-back-link:hover {
+  color: var(--foreground);
+}
+
+.brand-back-link svg {
+  width: 1rem;
+}
+
+.brand-lab-intro {
+  display: grid;
+  max-width: 1180px;
+  grid-template-columns: 1.4fr 0.6fr;
+  column-gap: 4rem;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vw, 8rem) 1.5rem clamp(3rem, 6vw, 5rem);
+}
+
+.brand-lab-intro .eyebrow {
+  grid-column: 1 / -1;
+}
+
+.brand-lab-intro h1 {
+  max-width: 780px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7vw, 7.5rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.brand-lab-intro > p:last-child {
+  align-self: end;
+  margin: 0 0 0.4rem;
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.logo-studies {
+  max-width: 1180px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+}
+
+.logo-study {
+  display: grid;
+  min-height: 310px;
+  grid-template-columns: 0.55fr 2.2fr 0.9fr;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+  background: rgb(10 9 9 / 62%);
+}
+
+.logo-study--selected {
+  background: color-mix(in oklch, var(--primary), var(--background) 91%);
+  box-shadow: inset 3px 0 var(--primary);
+}
+
+.logo-study-meta,
+.logo-study-copy {
+  padding: 2rem;
+}
+
+.logo-study-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.logo-study--selected .logo-study-meta span:last-child {
+  color: var(--primary);
+}
+
+.logo-study-stage {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 3rem;
+}
+
+.logo-study-stage .screen-ranking-wordmark {
+  font-size: clamp(2.1rem, 5.2vw, 5rem);
+}
+
+.logo-study-stage .screen-ranking-wordmark--gothic {
+  font-size: clamp(2.8rem, 6.5vw, 6.4rem);
+}
+
+.logo-study-stage .screen-ranking-wordmark--editorial {
+  font-size: clamp(3.4rem, 7vw, 7rem);
+}
+
+.logo-study-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-left: 1px solid var(--border);
+}
+
+.logo-study-copy h2,
+.brand-size-test h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+.logo-study-copy p {
+  margin: 0.8rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.brand-size-test {
+  display: grid;
+  max-width: 1180px;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 4rem;
+  align-items: center;
+  margin: 5rem auto 0;
+  padding: 3.5rem 1.5rem 6rem;
+}
+
+.brand-size-test .eyebrow {
+  margin-bottom: 0.7rem;
+}
+
+.brand-size-samples {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+}
+
+.size-sample-large {
+  font-size: 2.2rem;
+}
+
+.size-sample-medium {
+  font-size: 1.2rem;
+}
+
+.size-sample-small {
+  font-size: 0.72rem;
 }
 
 .home-hero {
@@ -897,6 +1161,10 @@ a {
     padding: 0 1rem;
   }
 
+  .site-header .wordmark {
+    font-size: 0.76rem;
+  }
+
   .home-hero {
     min-height: auto;
     grid-template-columns: 1fr;
@@ -978,9 +1246,12 @@ a {
     gap: 1.25rem;
   }
 
-  .sort-header .wordmark span,
   .sort-tools {
     display: none;
+  }
+
+  .sort-header .wordmark {
+    font-size: 0.64rem;
   }
 
   .battle-stage {
@@ -1108,6 +1379,70 @@ a {
     flex-direction: column;
     gap: 1rem;
     padding-inline: 1.25rem;
+  }
+
+  .brand-lab-header {
+    min-height: 62px;
+    padding: 0 1rem;
+  }
+
+  .brand-lab-index {
+    display: none;
+  }
+
+  .brand-lab-intro {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 4rem 1.25rem 2.5rem;
+  }
+
+  .brand-lab-intro h1 {
+    font-size: clamp(3.2rem, 15vw, 5.4rem);
+  }
+
+  .logo-studies {
+    margin-inline: 1rem;
+  }
+
+  .logo-study {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .logo-study-meta {
+    min-height: 54px;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+
+  .logo-study-stage {
+    min-height: 220px;
+    padding: 2rem 1rem;
+  }
+
+  .logo-study-stage .screen-ranking-wordmark--primary {
+    font-size: clamp(1.9rem, 9vw, 3.2rem);
+  }
+
+  .logo-study-stage .screen-ranking-wordmark--gothic,
+  .logo-study-stage .screen-ranking-wordmark--editorial {
+    font-size: clamp(2.5rem, 12vw, 4.2rem);
+  }
+
+  .logo-study-copy {
+    border-top: 1px solid var(--border);
+    border-left: 0;
+    padding: 1.25rem;
+  }
+
+  .brand-size-test {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-top: 2rem;
+    padding: 2.5rem 1.25rem 4rem;
   }
 }
 

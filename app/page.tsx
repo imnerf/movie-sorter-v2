@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { Progress } from '@/components/ui/progress';
 import { movies, type Movie } from '@/app/data/movies';
+import { ScreenRankingWordmark } from '@/app/components/screen-ranking-wordmark';
 
 const SAVE_KEY = 'movie-sorter-progress-v2';
 const DATA_VERSION = '2026-09-09-2';
@@ -491,9 +492,8 @@ export default function Home() {
     return (
       <main className="site-shell home-view">
         <header className="site-header">
-          <a href="#top" className="wordmark" aria-label="Movie Sorter home">
-            <Film aria-hidden="true" />
-            <span>Movie Sorter</span>
+          <a href="#top" className="wordmark" aria-label="Screen Ranking home">
+            <ScreenRankingWordmark />
           </a>
           <a
             className="header-link"
@@ -640,7 +640,7 @@ export default function Home() {
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · September 9, 2026</p>
+          <p className="last-updated">Latest update · September 11, 2026</p>
         </footer>
       </main>
     );
@@ -660,9 +660,12 @@ export default function Home() {
     return (
       <main className="site-shell results-view">
         <header className="site-header">
-          <button className="wordmark wordmark-button" onClick={reset}>
-            <Film aria-hidden="true" />
-            <span>Movie Sorter</span>
+          <button
+            className="wordmark wordmark-button"
+            onClick={reset}
+            aria-label="Return to Screen Ranking home"
+          >
+            <ScreenRankingWordmark />
           </button>
           <span className="completion-label">
             <Check aria-hidden="true" /> Sort complete
@@ -747,8 +750,7 @@ export default function Home() {
           className="wordmark wordmark-button"
           onClick={() => saveProgress()}
         >
-          <Film aria-hidden="true" />
-          <span>Movie Sorter</span>
+          <ScreenRankingWordmark />
         </button>
         <div className="sort-progress">
           <div className="progress-copy">

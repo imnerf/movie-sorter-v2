@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Movie Sorter — Rank Your Favorite Films',
+  title: 'Screen Ranking — Rank Your Favorite Films',
   description:
     'Choose between two movies at a time and discover your definitive personal ranking.',
 };
