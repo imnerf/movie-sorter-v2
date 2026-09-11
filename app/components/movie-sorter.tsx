@@ -255,11 +255,16 @@ export function MovieSorter({
   saveKey,
   dataVersion,
   listLabel,
+  heroImages,
 }: {
   movies: Movie[];
   saveKey: string;
   dataVersion: string;
   listLabel: string;
+  heroImages: {
+    left: string;
+    right: string;
+  };
 }) {
   const [state, setState] = useState<SortState | null>(null);
   const [history, setHistory] = useState<SortState[]>([]);
@@ -520,7 +525,7 @@ export function MovieSorter({
         <section id="top" className="home-hero" aria-labelledby="hero-title">
           <div className="portrait portrait-left" aria-hidden="true">
             <Image
-              src={`${ASSET_PREFIX}/brand/taxi-driver.jpg`}
+              src={heroImages.left}
               alt=""
               fill
               sizes="32vw"
@@ -563,7 +568,7 @@ export function MovieSorter({
 
           <div className="portrait portrait-right" aria-hidden="true">
             <Image
-              src={`${ASSET_PREFIX}/brand/tar.jpg`}
+              src={heroImages.right}
               alt=""
               fill
               sizes="32vw"

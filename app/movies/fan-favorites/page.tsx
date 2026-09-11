@@ -8,6 +8,11 @@ export default function FanFavoritesMovieSorterPage() {
       saveKey="screen-ranking-fan-favorites-progress"
       dataVersion="2026-09-11-fan-favorites-1"
       listLabel="The movies everybody knows"
+      heroImages={{
+        left: 'https://image.tmdb.org/t/p/original/vGYJRor3pCyjbaCpJKC39MpJhIT.jpg',
+        right:
+          'https://image.tmdb.org/t/p/original/twXYxcrup1QzyT84g2kbuz1iN01.jpg',
+      }}
     />
   );
 }
