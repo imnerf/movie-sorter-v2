@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Screen Ranking — Rank Your Favorite Films',
+  title: 'Screen Ranking — Make the List Yours',
   description:
-    'Choose between two movies at a time and discover your definitive personal ranking.',
+    'Head-to-head sorting games for movies, television, and everything worth ranking.',
 };
 
 export default function RootLayout({

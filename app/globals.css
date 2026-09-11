@@ -243,6 +243,313 @@ a {
   width: 0.9rem;
 }
 
+.ranking-home {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #090808;
+  isolation: isolate;
+}
+
+.poster-wall {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  display: grid;
+  height: max(100svh, 860px);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 0.65rem;
+  overflow: hidden;
+  padding: 0.65rem 0;
+}
+
+.poster-ribbon {
+  --row: 0;
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  gap: 0.65rem;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: poster-ribbon-left 1.1s cubic-bezier(0.16, 0.82, 0.23, 1)
+    calc(90ms + var(--row) * 120ms) forwards;
+}
+
+.poster-ribbon--right {
+  justify-content: flex-end;
+  animation-name: poster-ribbon-right;
+}
+
+.wall-poster {
+  position: relative;
+  width: clamp(92px, 10.5vw, 154px);
+  flex: 0 0 clamp(92px, 10.5vw, 154px);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 8%);
+  background: #171414;
+}
+
+.wall-poster img {
+  object-fit: cover;
+  filter: saturate(0.46) brightness(0.52) contrast(1.08);
+  transform: scale(1.01);
+}
+
+.poster-wall-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 38%,
+      rgb(7 6 6 / 48%) 0%,
+      rgb(7 6 6 / 72%) 35%,
+      rgb(7 6 6 / 38%) 72%
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(8 7 7 / 46%) 0%,
+      rgb(8 7 7 / 12%) 42%,
+      rgb(8 7 7 / 88%) 92%,
+      #090808 100%
+    );
+  pointer-events: none;
+}
+
+.ranking-home-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(255 255 255 / 14%);
+  padding: 0 3.5vw;
+  background: rgb(8 7 7 / 42%);
+  backdrop-filter: blur(14px);
+}
+
+.ranking-home-header > a:first-child {
+  font-size: 0.9rem;
+}
+
+.ranking-home-header > a:last-child {
+  color: rgb(245 237 226 / 65%);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 160ms ease;
+}
+
+.ranking-home-header > a:last-child:hover {
+  color: var(--foreground);
+}
+
+.ranking-home-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: calc(100svh - 128px);
+  max-width: 1240px;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vh, 7rem) 2rem 4.5rem;
+}
+
+.ranking-home-intro {
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ranking-home-intro h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.7rem, 7.5vw, 7.8rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+.ranking-home-intro > p:last-child {
+  max-width: 560px;
+  margin: 1.5rem auto 0;
+  color: rgb(245 237 226 / 70%);
+  font-size: clamp(1rem, 1.3vw, 1.12rem);
+  line-height: 1.65;
+}
+
+.sorter-shelf {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: clamp(3rem, 7vh, 5.5rem);
+}
+
+.sorter-tile {
+  position: relative;
+  display: flex;
+  min-height: 265px;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 0.8rem;
+  padding: 1.35rem;
+  background: rgb(15 13 13 / 76%);
+  box-shadow: 0 20px 70px rgb(0 0 0 / 24%);
+  backdrop-filter: blur(20px);
+}
+
+.sorter-tile--active {
+  border-color: color-mix(in oklch, var(--primary), white 12%);
+  background:
+    linear-gradient(135deg, rgb(173 49 38 / 20%), transparent 50%),
+    rgb(17 14 14 / 90%);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.sorter-tile--active:hover {
+  border-color: var(--primary);
+  box-shadow: 0 24px 80px rgb(0 0 0 / 42%);
+  transform: translateY(-4px);
+}
+
+.sorter-tile--active::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-bottom-left-radius: 100%;
+  background: color-mix(in oklch, var(--primary), transparent 82%);
+  content: '';
+  pointer-events: none;
+}
+
+.sorter-tile--soon {
+  color: rgb(245 237 226 / 58%);
+}
+
+.sorter-tile-topline,
+.sorter-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sorter-tile-topline {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sorter-tile-topline svg {
+  width: 1rem;
+  color: var(--primary);
+}
+
+.sorter-count {
+  margin: 0 0 0.45rem;
+  color: var(--primary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sorter-tile h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.2vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.sorter-tile h2 + p {
+  max-width: 330px;
+  margin: 0.75rem 0 0;
+  color: rgb(245 237 226 / 58%);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.sorter-cta,
+.sorter-status {
+  margin-top: 1.6rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sorter-cta {
+  justify-content: flex-start;
+  gap: 0.55rem;
+  color: var(--foreground);
+}
+
+.sorter-cta svg {
+  width: 1rem;
+  transition: transform 180ms ease;
+}
+
+.sorter-tile--active:hover .sorter-cta svg {
+  transform: translateX(4px);
+}
+
+.sorter-status {
+  color: rgb(245 237 226 / 36%);
+}
+
+.ranking-home-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  padding: 0 3.5vw;
+  color: rgb(245 237 226 / 42%);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@keyframes poster-ribbon-left {
+  from {
+    opacity: 0;
+    transform: translateX(-82vw);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-1.5vw);
+  }
+}
+
+@keyframes poster-ribbon-right {
+  from {
+    opacity: 0;
+    transform: translateX(82vw);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(1.5vw);
+  }
+}
+
 .brand-lab {
   min-height: 100svh;
   background:
@@ -1123,6 +1430,15 @@ a {
 }
 
 @media (max-width: 980px) {
+  .sorter-shelf {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sorter-tile--active {
+    min-height: 230px;
+    grid-column: 1 / -1;
+  }
+
   .home-hero {
     grid-template-columns: minmax(130px, 0.55fr) minmax(360px, 1.4fr) minmax(
         130px,
@@ -1155,6 +1471,63 @@ a {
 }
 
 @media (max-width: 760px) {
+  .poster-wall {
+    height: 860px;
+    gap: 0.45rem;
+    padding-block: 0.45rem;
+  }
+
+  .poster-ribbon {
+    gap: 0.45rem;
+  }
+
+  .wall-poster {
+    width: 92px;
+    flex-basis: 92px;
+  }
+
+  .ranking-home-header {
+    min-height: 62px;
+    padding: 0 1rem;
+  }
+
+  .ranking-home-header > a:first-child {
+    font-size: 0.76rem;
+  }
+
+  .ranking-home-content {
+    min-height: auto;
+    padding: 5rem 1rem 3.5rem;
+  }
+
+  .ranking-home-intro h1 {
+    font-size: clamp(3.5rem, 16vw, 5.5rem);
+  }
+
+  .ranking-home-intro > p:last-child {
+    max-width: 370px;
+  }
+
+  .sorter-shelf {
+    grid-template-columns: 1fr;
+    margin-top: 3.5rem;
+  }
+
+  .sorter-tile,
+  .sorter-tile--active {
+    min-height: 230px;
+    grid-column: auto;
+  }
+
+  .ranking-home-footer {
+    min-height: 70px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0 1rem;
+  }
+
   .site-header,
   .sort-header {
     min-height: 62px;
@@ -1454,5 +1827,10 @@ a {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .poster-ribbon {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -3,6 +3,8 @@ import { ArrowLeft } from 'lucide-react';
 
 import { ScreenRankingWordmark } from '@/app/components/screen-ranking-wordmark';
 
+const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
 const studies = [
   {
     variant: 'primary' as const,
@@ -34,7 +36,7 @@ export default function BrandStudies() {
   return (
     <main className="brand-lab">
       <header className="brand-lab-header">
-        <Link href="/" className="brand-back-link">
+        <Link href={`${ASSET_PREFIX}/`} className="brand-back-link">
           <ArrowLeft aria-hidden="true" /> Back to the sorter
         </Link>
         <span className="brand-lab-index">Screen Ranking · Wordmark studies</span>
