@@ -181,10 +181,10 @@ export default function ScreenRankingHome() {
             </div>
             <div>
               <p className="sorter-count">140 films</p>
-              <h2>The Cinephile List</h2>
+              <h2>Brandon’s Movie List</h2>
               <p>
-                Modern favorites, international landmarks, and established
-                classics.
+                A personal pool shaped by what I’ve seen and loved: modern
+                favorites, international landmarks, and established classics.
               </p>
             </div>
             <span className="sorter-cta">
@@ -192,20 +192,26 @@ export default function ScreenRankingHome() {
             </span>
           </a>
 
-          <article className="sorter-tile sorter-tile--soon">
+          <a
+            className="sorter-tile sorter-tile--active"
+            href={`${ASSET_PREFIX}/movies/fan-favorites/`}
+          >
             <div className="sorter-tile-topline">
-              <span>Coming next</span>
+              <span>Now playing</span>
               <Sparkles aria-hidden="true" />
             </div>
             <div>
-              <p className="sorter-count">The crowd-pleasers</p>
-              <h2>Movies Everyone Knows</h2>
+              <p className="sorter-count">90 films</p>
+              <h2>Fan Favorites</h2>
               <p>
-                Blockbusters, family favorites, and the movies nobody missed.
+                Blockbusters, modern favorites, enduring classics, and the
+                movies almost everybody knows.
               </p>
             </div>
-            <span className="sorter-status">In development</span>
-          </article>
+            <span className="sorter-cta">
+              Start ranking <ArrowRight aria-hidden="true" />
+            </span>
+          </a>
 
           <article className="sorter-tile sorter-tile--soon">
             <div className="sorter-tile-topline">

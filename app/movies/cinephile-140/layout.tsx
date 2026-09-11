@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'The Cinephile List — Screen Ranking',
+  title: 'Brandon’s Movie List — Screen Ranking',
   description:
-    'Rank 140 modern favorites, international landmarks, and established classics through head-to-head choices.',
+    'Rank Brandon’s personal pool of 140 modern favorites, international landmarks, and established classics through head-to-head choices.',
 };
 
 export default function CinephileSorterLayout({
