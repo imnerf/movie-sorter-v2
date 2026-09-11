@@ -181,7 +181,7 @@ export default function ScreenRankingHome() {
             </div>
             <div>
               <p className="sorter-count">140 films</p>
-              <h2>Brandon’s Movie List</h2>
+              <h2>Nerf’s Movie List</h2>
               <p>
                 A personal pool shaped by what I’ve seen and loved: modern
                 favorites, international landmarks, and established classics.

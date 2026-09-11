@@ -7,7 +7,7 @@ export default function PersonalMovieSorterPage() {
       movies={movies}
       saveKey="movie-sorter-progress-v2"
       dataVersion="2026-09-09-2"
-      listLabel="Brandon’s personal movie list"
+      listLabel="Nerf’s personal movie list"
     />
   );
 }
