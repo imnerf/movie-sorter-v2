@@ -26,6 +26,7 @@ import { ScreenRankingWordmark } from '@/app/components/screen-ranking-wordmark'
 const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 type SortState = {
+  runId: string;
   pending: string[][];
   built: string[][];
   left: string[] | null;
@@ -34,8 +35,15 @@ type SortState = {
   rightIndex: number;
   merged: string[];
   decisions: number;
+  choices: BattleChoice[];
   ties: [string, string][];
   result: string[] | null;
+};
+
+type BattleChoice = {
+  leftMovieId: string;
+  rightMovieId: string;
+  result: 'left' | 'tie' | 'right';
 };
 
 type SavedSort = {
@@ -68,11 +76,13 @@ declare global {
 function cloneState(state: SortState): SortState {
   return {
     ...state,
+    runId: state.runId || crypto.randomUUID(),
     pending: state.pending.map((run) => [...run]),
     built: state.built.map((run) => [...run]),
     left: state.left ? [...state.left] : null,
     right: state.right ? [...state.right] : null,
     merged: [...state.merged],
+    choices: (state.choices ?? []).map((choice) => ({ ...choice })),
     ties: state.ties.map((pair) => [...pair] as [string, string]),
     result: state.result ? [...state.result] : null,
   };
@@ -122,6 +132,7 @@ function createSortState(ids: string[]): SortState {
   }
 
   return prepareNextPair({
+    runId: crypto.randomUUID(),
     pending: shuffled.map((id) => [id]),
     built: [],
     left: null,
@@ -130,6 +141,7 @@ function createSortState(ids: string[]): SortState {
     rightIndex: 0,
     merged: [],
     decisions: 0,
+    choices: [],
     ties: [],
     result: null,
   });
@@ -144,6 +156,12 @@ function applyChoice(
   const state = cloneState(input);
   const leftId = state.left![state.leftIndex];
   const rightId = state.right![state.rightIndex];
+
+  state.choices.push({
+    leftMovieId: leftId,
+    rightMovieId: rightId,
+    result: choice,
+  });
 
   if (choice === 'left' || choice === 'tie') {
     state.merged.push(leftId);
@@ -252,12 +270,14 @@ function buildResultGroups(state: SortState, byId: Map<string, Movie>) {
 
 export function MovieSorter({
   movies,
+  sorterId,
   saveKey,
   dataVersion,
   listLabel,
   heroImages,
 }: {
   movies: Movie[];
+  sorterId: 'nerfs-movie-list' | 'fan-favorites';
   saveKey: string;
   dataVersion: string;
   listLabel: string;
@@ -501,6 +521,36 @@ export function MovieSorter({
     }
   }, [dataVersion, history, saveKey, state]);
 
+  useEffect(() => {
+    if (!state?.result || !state.runId) return;
+    if (window.location.hostname.endsWith('.github.io')) return;
+
+    const submit = async () => {
+      try {
+        const response = await fetch(`${ASSET_PREFIX}/analytics/completions`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            version: 1,
+            runId: state.runId,
+            sorterId,
+            listVersion: dataVersion,
+            decisionCount: state.decisions,
+            movieCount: movies.length,
+            choices: state.choices,
+            ranking: state.result,
+          }),
+          keepalive: true,
+        });
+        if (!response.ok) throw new Error('Analytics submission failed');
+      } catch {
+        // Analytics must never interrupt or delay the completed ranking.
+      }
+    };
+
+    void submit();
+  }, [dataVersion, movies.length, sorterId, state]);
+
   if (!state) {
     return (
       <main className="site-shell home-view">
@@ -524,13 +574,7 @@ export function MovieSorter({
 
         <section id="top" className="home-hero" aria-labelledby="hero-title">
           <div className="portrait portrait-left" aria-hidden="true">
-            <Image
-              src={heroImages.left}
-              alt=""
-              fill
-              sizes="32vw"
-              priority
-            />
+            <Image src={heroImages.left} alt="" fill sizes="32vw" priority />
           </div>
 
           <div className="hero-copy">
@@ -567,13 +611,7 @@ export function MovieSorter({
           </div>
 
           <div className="portrait portrait-right" aria-hidden="true">
-            <Image
-              src={heroImages.right}
-              alt=""
-              fill
-              sizes="32vw"
-              priority
-            />
+            <Image src={heroImages.right} alt="" fill sizes="32vw" priority />
           </div>
         </section>
 
@@ -657,7 +695,7 @@ export function MovieSorter({
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · September 11, 2026</p>
+          <p className="last-updated">Latest update · September 12, 2026</p>
         </footer>
       </main>
     );
@@ -743,7 +781,10 @@ export function MovieSorter({
         </section>
 
         <footer className="results-footer">
-          <p>Your ranking is only stored on this device until you copy it.</p>
+          <p>
+            Completed rankings contribute to anonymous community stats. No
+            account or personal details are collected.
+          </p>
           <Button variant="ghost" onClick={reset}>
             <RotateCcw aria-hidden="true" /> New sort
           </Button>

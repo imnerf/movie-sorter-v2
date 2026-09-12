@@ -5,6 +5,7 @@ export default function PersonalMovieSorterPage() {
   return (
     <MovieSorter
       movies={movies}
+      sorterId="nerfs-movie-list"
       saveKey="movie-sorter-progress-v2"
       dataVersion="2026-09-09-2"
       listLabel="Nerf’s personal movie list"

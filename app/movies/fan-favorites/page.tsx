@@ -5,6 +5,7 @@ export default function FanFavoritesMovieSorterPage() {
   return (
     <MovieSorter
       movies={popularMovies}
+      sorterId="fan-favorites"
       saveKey="screen-ranking-fan-favorites-progress"
       dataVersion="2026-09-11-fan-favorites-1"
       listLabel="The movies everybody knows"
