@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
   ArrowLeft,
@@ -61,6 +61,13 @@ type BattleChoice = {
   leftMovieId: string;
   rightMovieId: string;
   result: 'left' | 'tie' | 'right';
+};
+
+type BattleTransition = {
+  id: number;
+  left: Movie;
+  right: Movie;
+  choice: 'left' | 'tie' | 'right';
 };
 
 type SavedSort = {
@@ -214,6 +221,76 @@ function applyChoice(
   return state;
 }
 
+function estimateRemainingComparisons(state: SortState) {
+  if (state.result) return 0;
+
+  let comparisons = 0;
+  const nextRound = state.built.map((run) => run.length);
+
+  if (state.left && state.right) {
+    const leftRemaining = state.left.length - state.leftIndex;
+    const rightRemaining = state.right.length - state.rightIndex;
+    if (leftRemaining > 0 && rightRemaining > 0) {
+      comparisons += leftRemaining + rightRemaining - 1;
+    }
+    nextRound.push(state.merged.length + leftRemaining + rightRemaining);
+  }
+
+  for (let index = 0; index < state.pending.length; index += 2) {
+    const leftLength = state.pending[index].length;
+    const rightLength = state.pending[index + 1]?.length;
+    if (rightLength === undefined) {
+      nextRound.push(leftLength);
+    } else {
+      comparisons += leftLength + rightLength - 1;
+      nextRound.push(leftLength + rightLength);
+    }
+  }
+
+  let round = nextRound;
+  while (round.length > 1) {
+    const followingRound: number[] = [];
+    for (let index = 0; index < round.length; index += 2) {
+      const leftLength = round[index];
+      const rightLength = round[index + 1];
+      if (rightLength === undefined) {
+        followingRound.push(leftLength);
+      } else {
+        comparisons += leftLength + rightLength - 1;
+        followingRound.push(leftLength + rightLength);
+      }
+    }
+    round = followingRound;
+  }
+
+  return comparisons;
+}
+
+function median(values: number[]) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function formatTimeRemaining(seconds: number) {
+  if (seconds < 60) return 'under 1 min left';
+
+  const minutes = seconds / 60;
+  if (minutes < 10) return `about ${Math.max(1, Math.round(minutes))} min left`;
+  if (minutes < 60) {
+    return `about ${Math.max(5, Math.round(minutes / 5) * 5)} min left`;
+  }
+
+  const roundedMinutes = Math.round(minutes / 15) * 15;
+  const hours = Math.floor(roundedMinutes / 60);
+  const extraMinutes = roundedMinutes % 60;
+  return extraMinutes
+    ? `about ${hours} hr ${extraMinutes} min left`
+    : `about ${hours} hr left`;
+}
+
 function Poster({
   movie,
   priority = false,
@@ -323,6 +400,11 @@ export function MovieSorter({
   } | null>(null);
   const [isCreatingShareCard, setIsCreatingShareCard] = useState(false);
   const [isCreatingFullRanking, setIsCreatingFullRanking] = useState(false);
+  const [paceSamples, setPaceSamples] = useState<number[]>([]);
+  const [battleTransition, setBattleTransition] =
+    useState<BattleTransition | null>(null);
+  const lastChoiceAt = useRef<number | null>(null);
+  const transitionId = useRef(0);
   const byId = useMemo(
     () => new Map(movies.map((movie) => [movie.id, movie])),
     [movies],
@@ -344,11 +426,6 @@ export function MovieSorter({
   );
   const shareListName =
     sorterId === 'fan-favorites' ? 'Fan Favorites' : "Nerf's Movie List";
-  const maxComparisons = useMemo(() => {
-    const power = Math.ceil(Math.log2(Math.max(movies.length, 2)));
-    return movies.length * power - 2 ** power + 1;
-  }, [movies.length]);
-
   useEffect(() => {
     if (!notice) return;
     const timer = window.setTimeout(() => setNotice(null), 2200);
@@ -383,6 +460,9 @@ export function MovieSorter({
   const startSorting = useCallback(() => {
     setState(createSortState(movies.map((movie) => movie.id)));
     setHistory([]);
+    setPaceSamples([]);
+    setBattleTransition(null);
+    lastChoiceAt.current = null;
     setNotice(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [movies]);
@@ -395,6 +475,9 @@ export function MovieSorter({
       if (saved.version !== dataVersion) return;
       setState(prepareNextPair(saved.state));
       setHistory(saved.history ?? []);
+      setPaceSamples([]);
+      setBattleTransition(null);
+      lastChoiceAt.current = null;
       setNotice('Progress restored');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch {
@@ -406,10 +489,35 @@ export function MovieSorter({
   const choose = useCallback(
     (choice: 'left' | 'tie' | 'right') => {
       if (!state || state.result) return;
+
+      const now = performance.now();
+      if (lastChoiceAt.current !== null) {
+        const sample = (now - lastChoiceAt.current) / 1000;
+        if (sample >= 0.35 && sample <= 20) {
+          setPaceSamples((samples) => [...samples, sample].slice(-20));
+        }
+      }
+      lastChoiceAt.current = now;
+
+      const leftId = state.left?.[state.leftIndex];
+      const rightId = state.right?.[state.rightIndex];
+      const left = leftId ? byId.get(leftId) : undefined;
+      const right = rightId ? byId.get(rightId) : undefined;
+      if (left && right) {
+        const id = transitionId.current + 1;
+        transitionId.current = id;
+        setBattleTransition({ id, left, right, choice });
+        window.setTimeout(() => {
+          setBattleTransition((transition) =>
+            transition?.id === id ? null : transition,
+          );
+        }, 190);
+      }
+
       setHistory((previous) => [...previous.slice(-79), cloneState(state)]);
       setState(applyChoice(state, choice));
     },
-    [state],
+    [byId, state],
   );
 
   const undo = useCallback(() => {
@@ -417,6 +525,8 @@ export function MovieSorter({
     const previous = history[history.length - 1];
     setState(previous);
     setHistory((items) => items.slice(0, -1));
+    setBattleTransition(null);
+    lastChoiceAt.current = null;
     setNotice('Last choice undone');
   }, [history]);
 
@@ -426,6 +536,9 @@ export function MovieSorter({
     setNotice(null);
     setShareDialogOpen(false);
     setShareCard(null);
+    setPaceSamples([]);
+    setBattleTransition(null);
+    lastChoiceAt.current = null;
     window.localStorage.removeItem(saveKey);
     setHasSave(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -988,10 +1101,16 @@ export function MovieSorter({
 
   const leftMovie = byId.get(state.left![state.leftIndex])!;
   const rightMovie = byId.get(state.right![state.rightIndex])!;
+  const remainingComparisons = estimateRemainingComparisons(state);
+  const estimatedTotal = state.decisions + remainingComparisons;
   const progress = Math.min(
     99,
-    Math.round((state.decisions / maxComparisons) * 100),
+    Math.round((state.decisions / Math.max(estimatedTotal, 1)) * 100),
   );
+  const pace = paceSamples.length >= 8 ? median(paceSamples) : null;
+  const timeRemaining = pace
+    ? formatTimeRemaining(remainingComparisons * pace)
+    : 'Learning your pace…';
 
   return (
     <main className="site-shell sorting-view">
@@ -1006,9 +1125,20 @@ export function MovieSorter({
         <div className="sort-progress">
           <div className="progress-copy">
             <span>Decision {state.decisions + 1}</span>
-            <span>about {maxComparisons} total</span>
+            <span
+              title={
+                pace
+                  ? `Approximately ${remainingComparisons} decisions remaining at your current pace`
+                  : 'A time estimate appears after your first few decisions'
+              }
+            >
+              {timeRemaining}
+            </span>
           </div>
-          <Progress value={progress} aria-label={`${progress}% complete`} />
+          <Progress
+            value={progress}
+            aria-label={`${progress}% complete, approximately ${remainingComparisons} decisions remaining`}
+          />
         </div>
         <div className="sort-tools">
           <Button
@@ -1031,42 +1161,74 @@ export function MovieSorter({
           <h1 id="battle-title">Which movie do you prefer?</h1>
         </div>
 
-        <div className="battle-grid">
-          <Button
-            variant="outline"
-            className="movie-choice movie-choice-left"
-            onClick={() => choose('left')}
-            aria-label={`Choose ${leftMovie.title}`}
+        <div className="battle-grid-wrap">
+          <div
+            className="battle-grid battle-grid-current"
+            key={`${leftMovie.id}-${rightMovie.id}-${state.decisions}`}
           >
-            <Poster movie={leftMovie} priority />
-            <span className="choice-footer">
-              <span className="choice-title">{leftMovie.title}</span>
-              <span className="choice-key">
-                <Kbd>H</Kbd>
-                <ArrowLeft aria-hidden="true" />
+            <Button
+              variant="outline"
+              className="movie-choice movie-choice-left"
+              onClick={() => choose('left')}
+              aria-label={`Choose ${leftMovie.title}`}
+            >
+              <Poster movie={leftMovie} priority />
+              <span className="choice-footer">
+                <span className="choice-title">{leftMovie.title}</span>
+                <span className="choice-key">
+                  <Kbd>H</Kbd>
+                  <ArrowLeft aria-hidden="true" />
+                </span>
               </span>
-            </span>
-          </Button>
+            </Button>
 
-          <div className="versus-mark" aria-hidden="true">
-            <span>or</span>
+            <div className="versus-mark" aria-hidden="true">
+              <span>or</span>
+            </div>
+
+            <Button
+              variant="outline"
+              className="movie-choice movie-choice-right"
+              onClick={() => choose('right')}
+              aria-label={`Choose ${rightMovie.title}`}
+            >
+              <Poster movie={rightMovie} priority />
+              <span className="choice-footer">
+                <span className="choice-title">{rightMovie.title}</span>
+                <span className="choice-key">
+                  <ArrowRight aria-hidden="true" />
+                  <Kbd>L</Kbd>
+                </span>
+              </span>
+            </Button>
           </div>
 
-          <Button
-            variant="outline"
-            className="movie-choice movie-choice-right"
-            onClick={() => choose('right')}
-            aria-label={`Choose ${rightMovie.title}`}
-          >
-            <Poster movie={rightMovie} priority />
-            <span className="choice-footer">
-              <span className="choice-title">{rightMovie.title}</span>
-              <span className="choice-key">
-                <ArrowRight aria-hidden="true" />
-                <Kbd>L</Kbd>
-              </span>
-            </span>
-          </Button>
+          {battleTransition && (
+            <div
+              className={`battle-grid battle-grid-transition battle-transition-${battleTransition.choice}`}
+              aria-hidden="true"
+            >
+              <div className="movie-choice transition-choice transition-left">
+                <Poster movie={battleTransition.left} />
+                <span className="choice-footer">
+                  <span className="choice-title">
+                    {battleTransition.left.title}
+                  </span>
+                </span>
+              </div>
+              <div className="versus-mark">
+                <span>or</span>
+              </div>
+              <div className="movie-choice transition-choice transition-right">
+                <Poster movie={battleTransition.right} />
+                <span className="choice-footer">
+                  <span className="choice-title">
+                    {battleTransition.right.title}
+                  </span>
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         <Button

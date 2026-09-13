@@ -1047,13 +1047,58 @@ a {
   font-size: clamp(2rem, 3.5vw, 3.7rem);
 }
 
-.battle-grid {
+.battle-grid-wrap {
   position: relative;
-  display: grid;
   width: min(100%, 930px);
+}
+
+.battle-grid {
+  display: grid;
+  width: 100%;
   grid-template-columns: minmax(0, 1fr) 3rem minmax(0, 1fr);
   align-items: center;
   gap: 1rem;
+}
+
+.battle-grid-current {
+  animation: matchup-arrive 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.battle-grid-transition {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+}
+
+.battle-grid-transition .movie-choice {
+  box-shadow: 0 18px 55px rgb(0 0 0 / 22%);
+}
+
+.battle-transition-left .transition-left,
+.battle-transition-right .transition-right {
+  animation: chosen-advance-left 180ms ease-out forwards;
+}
+
+.battle-transition-right .transition-right {
+  animation-name: chosen-advance-right;
+}
+
+.battle-transition-left .transition-right,
+.battle-transition-right .transition-left {
+  animation: choice-recede 180ms ease-out forwards;
+}
+
+.battle-transition-tie .transition-left {
+  animation: tie-advance-left 180ms ease-out forwards;
+}
+
+.battle-transition-tie .transition-right {
+  animation: tie-advance-right 180ms ease-out forwards;
+}
+
+.battle-grid-transition .versus-mark {
+  animation: choice-recede 140ms ease-out forwards;
 }
 
 .movie-choice {
@@ -1208,6 +1253,48 @@ a {
 
 .mobile-sort-tools {
   display: none;
+}
+
+@keyframes matchup-arrive {
+  from {
+    opacity: 0.45;
+    transform: scale(0.992);
+  }
+}
+
+@keyframes chosen-advance-left {
+  to {
+    opacity: 0;
+    transform: translateX(10px) scale(1.01);
+  }
+}
+
+@keyframes chosen-advance-right {
+  to {
+    opacity: 0;
+    transform: translateX(-10px) scale(1.01);
+  }
+}
+
+@keyframes choice-recede {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes tie-advance-left {
+  to {
+    opacity: 0;
+    transform: translateX(7px) scale(1.005);
+  }
+}
+
+@keyframes tie-advance-right {
+  to {
+    opacity: 0;
+    transform: translateX(-7px) scale(1.005);
+  }
 }
 
 .toast {
