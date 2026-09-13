@@ -27,7 +27,7 @@ const featuredTitles = [
   '2001: A Space Odyssey',
   'Alien',
   'WALL·E',
-  'Anora',
+  'Heat',
   'Mad Max: Fury Road',
   'Goodfellas',
   'Perfect Blue',
@@ -36,69 +36,57 @@ const featuredTitles = [
   'The Lord of the Rings: The Fellowship of the Ring',
   'Princess Mononoke',
   'La La Land',
-  'The Matrix',
+  'The Prestige',
 ];
 
 const popularPosters: WallPoster[] = [
   {
     title: 'Star Wars',
-    poster:
-      'https://image.tmdb.org/t/p/w342/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg',
   },
   {
     title: 'Titanic',
-    poster:
-      'https://image.tmdb.org/t/p/w342/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg',
   },
   {
     title: 'Jaws',
-    poster:
-      'https://image.tmdb.org/t/p/w342/lxM6kqilAdpdhqUl2biYp5frUxE.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/lxM6kqilAdpdhqUl2biYp5frUxE.jpg',
   },
   {
     title: 'Jurassic Park',
-    poster:
-      'https://image.tmdb.org/t/p/w342/oU7Oq2kFAAlGqbU4VoAE36g4hoI.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/oU7Oq2kFAAlGqbU4VoAE36g4hoI.jpg',
   },
   {
     title: 'Rocky',
-    poster:
-      'https://image.tmdb.org/t/p/w342/cqxg1CihGR5ge0i1wYXr4Rdeppu.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/cqxg1CihGR5ge0i1wYXr4Rdeppu.jpg',
   },
   {
     title: 'Barbie',
-    poster:
-      'https://image.tmdb.org/t/p/w342/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
   },
   {
     title: 'The Lion King',
-    poster:
-      'https://image.tmdb.org/t/p/w342/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg',
   },
   {
     title: 'Back to the Future',
-    poster:
-      'https://image.tmdb.org/t/p/w342/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg',
   },
   {
     title: 'Raiders of the Lost Ark',
-    poster:
-      'https://image.tmdb.org/t/p/w342/ceG9VzoRAVGwivFU403Wc3AHRys.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/ceG9VzoRAVGwivFU403Wc3AHRys.jpg',
   },
   {
     title: 'The Avengers',
-    poster:
-      'https://image.tmdb.org/t/p/w342/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg',
   },
   {
     title: 'The Wizard of Oz',
-    poster:
-      'https://image.tmdb.org/t/p/w342/pfAZFD7I2hxW9HCChTuAzsdE6UX.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/pfAZFD7I2hxW9HCChTuAzsdE6UX.jpg',
   },
   {
     title: 'Top Gun',
-    poster:
-      'https://image.tmdb.org/t/p/w342/xUuHj3CgmZQ9P2cMaqQs4J0d4Zc.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/xUuHj3CgmZQ9P2cMaqQs4J0d4Zc.jpg',
   },
 ];
 
@@ -180,7 +168,7 @@ export default function ScreenRankingHome() {
               <Film aria-hidden="true" />
             </div>
             <div>
-              <p className="sorter-count">140 films</p>
+              <p className="sorter-count">130 films</p>
               <h2>Nerf’s Movie List</h2>
               <p>
                 A personal pool shaped by what I’ve seen and loved: modern
@@ -221,7 +209,9 @@ export default function ScreenRankingHome() {
             <div>
               <p className="sorter-count">Series edition</p>
               <h2>Television</h2>
-              <p>The shows you finished, rewatched, and never stopped quoting.</p>
+              <p>
+                The shows you finished, rewatched, and never stopped quoting.
+              </p>
             </div>
             <span className="sorter-status">Coming soon</span>
           </article>

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Nerf’s Movie List — Screen Ranking',
   description:
-    'Rank Nerf’s personal pool of 140 modern favorites, international landmarks, and established classics through head-to-head choices.',
+    'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
   alternates: {
     canonical: '/movies/cinephile-140',
   },
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: 'Screen Ranking',
     title: 'Nerf’s Movie List — Screen Ranking',
     description:
-      'Rank Nerf’s personal pool of 140 modern favorites, international landmarks, and established classics through head-to-head choices.',
+      'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
     images: [
       {
         url: '/social/og-nerfs-movie-list.png',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Nerf’s Movie List — Screen Ranking',
     description:
-      'Rank Nerf’s personal pool of 140 modern favorites, international landmarks, and established classics through head-to-head choices.',
+      'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
     images: ['/social/og-nerfs-movie-list.png'],
   },
 };

@@ -168,11 +168,6 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Anora',
-    img: 'https://image.tmdb.org/t/p/original/9leBvae1CCbti0BhoArm6kInKwF.jpg',
-    opts: {},
-  },
-  {
     name: 'Coraline',
     img: 'https://image.tmdb.org/t/p/w500/4jeFXQYytChdZYE9JYO7Un87IlW.jpg',
     opts: {},
@@ -210,11 +205,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'Memento',
     img: 'https://image.tmdb.org/t/p/w500/nWtySDlffTfwAa0rSfq61o33ZXV.jpg',
-    opts: {},
-  },
-  {
-    name: 'Catch Me If You Can',
-    img: 'https://image.tmdb.org/t/p/w500/sdYgEkKCDPWNU6KnoL4qd8xZ4w7.jpg',
     opts: {},
   },
   {
@@ -290,11 +280,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: "Pan's Labyrinth",
     img: 'https://image.tmdb.org/t/p/w500/2VVhikIxoztAXEDQZLOdtBsu6vf.jpg',
-    opts: {},
-  },
-  {
-    name: 'Godzilla Minus One',
-    img: 'https://image.tmdb.org/t/p/w500/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg',
     opts: {},
   },
   {
@@ -418,11 +403,6 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Forrest Gump',
-    img: 'https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg',
-    opts: {},
-  },
-  {
     name: 'Donnie Darko',
     img: 'https://image.tmdb.org/t/p/w500/6FKym4sm5LcqUC80HNpn2ejVoro.jpg',
     opts: {},
@@ -465,11 +445,6 @@ const movieSeeds: MovieSeed[] = [
   {
     name: 'Mulholland Drive',
     img: 'https://image.tmdb.org/t/p/w500/x7A59t6ySylr1L7aubOQEA480vM.jpg',
-    opts: {},
-  },
-  {
-    name: "Howl's Moving Castle",
-    img: 'https://image.tmdb.org/t/p/original/13kOl2v0nD2OLbVSHnHk8GUFEhO.jpg',
     opts: {},
   },
   {
@@ -543,11 +518,6 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'The Matrix',
-    img: 'https://image.tmdb.org/t/p/w500/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg',
-    opts: {},
-  },
-  {
     name: 'The Seventh Seal',
     img: 'https://image.tmdb.org/t/p/w500/j6z3c6dGXtPHUATJX8J7Y70mM1S.jpg',
     opts: {},
@@ -593,18 +563,8 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'The Exorcist',
-    img: 'https://image.tmdb.org/t/p/w500/5x0CeVHJI8tcDx8tUUwYHQSNILq.jpg',
-    opts: {},
-  },
-  {
     name: 'Minari',
     img: 'https://image.tmdb.org/t/p/w500/6mPNdmjdbVKPITv3LLCmQoKs9Zw.jpg',
-    opts: {},
-  },
-  {
-    name: 'The Holdovers',
-    img: 'https://image.tmdb.org/t/p/w500/VHSzNBTwxV8vh7wylo7O9CLdac.jpg',
     opts: {},
   },
   {
@@ -698,27 +658,17 @@ const movieSeeds: MovieSeed[] = [
     opts: {},
   },
   {
-    name: 'Sinners',
-    img: 'https://image.tmdb.org/t/p/w500/fWPgbnt2LSqkQ6cdQc0SZN9CpLm.jpg',
-    opts: {},
-  },
-  {
-    name: 'Hamnet',
-    img: 'https://image.tmdb.org/t/p/w500/vbeyOZm2bvBXcbgPD3v6o94epPX.jpg',
-    opts: {},
-  },
-  {
     name: 'The Fabelmans',
     img: 'https://image.tmdb.org/t/p/w500/h7llKkqkkJtJrTOaDLuVeUYDQ7I.jpg',
     opts: {},
   },
 ];
 
-export const movies: Movie[] = movieSeeds.map((movie, index) => ({
-  id: `${index + 1}-${movie.name
+export const movies: Movie[] = movieSeeds.map((movie) => ({
+  id: movie.name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')}`,
+    .replace(/(^-|-$)/g, ''),
   title: movie.name,
   poster: movie.img.replace('/original/', '/w500/'),
 }));

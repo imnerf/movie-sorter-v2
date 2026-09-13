@@ -946,7 +946,7 @@ export function MovieSorter({
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · September 12, 2026</p>
+          <p className="last-updated">Latest update · September 13, 2026</p>
         </footer>
       </main>
     );

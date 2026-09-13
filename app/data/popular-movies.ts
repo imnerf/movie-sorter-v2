@@ -2,6 +2,16 @@ import { movies, type Movie } from './movies';
 
 const additionalMovies: Movie[] = [
   {
+    id: 'forrest-gump-1994',
+    title: 'Forrest Gump',
+    poster: 'https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg',
+  },
+  {
+    id: 'the-matrix-1999',
+    title: 'The Matrix',
+    poster: 'https://image.tmdb.org/t/p/w500/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg',
+  },
+  {
     id: 'barbie-2023',
     title: 'Barbie',
     poster:
