@@ -556,7 +556,10 @@ a {
     radial-gradient(circle at 86% 0%, rgb(128 40 29 / 20%), transparent 34rem),
     linear-gradient(rgb(255 255 255 / 2%) 1px, transparent 1px),
     var(--background);
-  background-size: auto, 100% 6rem, auto;
+  background-size:
+    auto,
+    100% 6rem,
+    auto;
 }
 
 .brand-lab-header {
@@ -1285,6 +1288,7 @@ a {
 
 .results-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.65rem;
   margin-top: 2rem;
@@ -1412,6 +1416,74 @@ a {
   font-size: 0.58rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.share-card-dialog {
+  width: min(94vw, 520px);
+  max-width: min(94vw, 520px);
+  max-height: calc(100svh - 2rem);
+  gap: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card), black 5%);
+  padding: 1rem;
+  box-shadow: 0 28px 90px rgb(0 0 0 / 62%);
+}
+
+.share-card-dialog [data-slot='dialog-title'] {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 400;
+}
+
+.share-card-dialog [data-slot='dialog-description'] {
+  color: var(--muted-foreground);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.share-card-preview {
+  display: grid;
+  width: min(100%, 310px);
+  max-height: 63svh;
+  aspect-ratio: 9 / 16;
+  place-items: center;
+  align-self: center;
+  justify-self: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: var(--background);
+  box-shadow: 0 16px 45px rgb(0 0 0 / 36%);
+}
+
+.share-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.share-card-loading {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: var(--muted-foreground);
+  font-size: 0.84rem;
+}
+
+.share-card-loading svg {
+  color: var(--primary);
+}
+
+.share-card-actions {
+  margin: 0 -1rem -1rem;
+  border-color: var(--border);
+  background: color-mix(in oklch, var(--secondary), transparent 25%);
+}
+
+.share-card-actions button {
+  min-height: 2.6rem;
 }
 
 .results-footer {
@@ -1703,6 +1775,16 @@ a {
     padding: 3rem 1rem 2.25rem;
   }
 
+  .results-actions {
+    width: min(100%, 330px);
+    flex-direction: column;
+    margin-inline: auto;
+  }
+
+  .results-actions button {
+    width: 100%;
+  }
+
   .ranking-board {
     padding-inline: 0.75rem;
   }
@@ -1752,6 +1834,15 @@ a {
     flex-direction: column;
     gap: 1rem;
     padding-inline: 1.25rem;
+  }
+
+  .share-card-dialog {
+    max-height: calc(100svh - 1rem);
+  }
+
+  .share-card-preview {
+    width: min(100%, 270px);
+    max-height: 57svh;
   }
 
   .brand-lab-header {

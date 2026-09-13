@@ -37,6 +37,7 @@ the domain is verified.
 - Undo and automatic local progress saving
 - Keyboard and touch controls
 - Copyable final ranking
+- Story-sized Top 20 share cards and full-list image exports
 - Responsive layout
 - Anonymous completed-sort analytics on Cloudflare D1
 

@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Check,
   Code,
+  Download,
   Equal,
   ExternalLink,
   Film,
@@ -14,14 +15,30 @@ import {
   Play,
   RotateCcw,
   Save,
+  Share2,
   Trophy,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Kbd } from '@/components/ui/kbd';
 import { Progress } from '@/components/ui/progress';
+import { Spinner } from '@/components/ui/spinner';
 import type { Movie } from '@/app/data/movies';
 import { ScreenRankingWordmark } from '@/app/components/screen-ranking-wordmark';
+import {
+  createFullRankingCard,
+  createTopTwentyCard,
+  downloadRankingImage,
+  type ExportRankingItem,
+} from '@/app/components/ranking-export';
 
 const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
@@ -299,10 +316,34 @@ export function MovieSorter({
     }
   });
   const [notice, setNotice] = useState<string | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [shareCard, setShareCard] = useState<{
+    blob: Blob;
+    previewUrl: string;
+  } | null>(null);
+  const [isCreatingShareCard, setIsCreatingShareCard] = useState(false);
+  const [isCreatingFullRanking, setIsCreatingFullRanking] = useState(false);
   const byId = useMemo(
     () => new Map(movies.map((movie) => [movie.id, movie])),
     [movies],
   );
+  const resultGroups = useMemo(
+    () => (state?.result ? buildResultGroups(state, byId) : []),
+    [byId, state],
+  );
+  const exportRanking = useMemo<ExportRankingItem[]>(
+    () =>
+      resultGroups.flatMap((group) =>
+        group.movies.map((movie) => ({
+          movie,
+          rank: group.rank,
+          tied: group.movies.length > 1,
+        })),
+      ),
+    [resultGroups],
+  );
+  const shareListName =
+    sorterId === 'fan-favorites' ? 'Fan Favorites' : "Nerf's Movie List";
   const maxComparisons = useMemo(() => {
     const power = Math.ceil(Math.log2(Math.max(movies.length, 2)));
     return movies.length * power - 2 ** power + 1;
@@ -313,6 +354,13 @@ export function MovieSorter({
     const timer = window.setTimeout(() => setNotice(null), 2200);
     return () => window.clearTimeout(timer);
   }, [notice]);
+
+  useEffect(
+    () => () => {
+      if (shareCard) URL.revokeObjectURL(shareCard.previewUrl);
+    },
+    [shareCard],
+  );
 
   const saveProgress = useCallback(
     (showNotice = true) => {
@@ -376,6 +424,8 @@ export function MovieSorter({
     setState(null);
     setHistory([]);
     setNotice(null);
+    setShareDialogOpen(false);
+    setShareCard(null);
     window.localStorage.removeItem(saveKey);
     setHasSave(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -383,15 +433,103 @@ export function MovieSorter({
 
   const copyRanking = useCallback(async () => {
     if (!state?.result) return;
-    const groups = buildResultGroups(state, byId);
-    const text = groups
+    const text = resultGroups
       .flatMap((group) =>
         group.movies.map((movie) => `${group.rank}. ${movie.title}`),
       )
       .join('\n');
     await navigator.clipboard.writeText(text);
     setNotice('Ranking copied to clipboard');
-  }, [byId, state]);
+  }, [resultGroups, state]);
+
+  const openShareCard = useCallback(async () => {
+    if (!state?.result) return;
+    setShareDialogOpen(true);
+    if (shareCard || isCreatingShareCard) return;
+
+    setIsCreatingShareCard(true);
+    try {
+      const blob = await createTopTwentyCard({
+        ranking: exportRanking,
+        listName: shareListName,
+        movieCount: movies.length,
+        decisionCount: state.decisions,
+      });
+      setShareCard({ blob, previewUrl: URL.createObjectURL(blob) });
+    } catch {
+      setShareDialogOpen(false);
+      setNotice('Could not create the share card');
+    } finally {
+      setIsCreatingShareCard(false);
+    }
+  }, [
+    exportRanking,
+    isCreatingShareCard,
+    movies.length,
+    shareCard,
+    shareListName,
+    state,
+  ]);
+
+  const downloadShareCard = useCallback(() => {
+    if (!shareCard) return;
+    downloadRankingImage(
+      shareCard.blob,
+      `screen-ranking-${sorterId}-top-20.png`,
+    );
+    setNotice('Share card downloaded');
+  }, [shareCard, sorterId]);
+
+  const sharePreparedCard = useCallback(async () => {
+    if (!shareCard) return;
+    const filename = `screen-ranking-${sorterId}-top-20.png`;
+    const file = new File([shareCard.blob], filename, { type: 'image/png' });
+
+    try {
+      if (
+        navigator.share &&
+        (!navigator.canShare || navigator.canShare({ files: [file] }))
+      ) {
+        await navigator.share({
+          files: [file],
+          title: `My ${shareListName} ranking`,
+          text: 'Made with Screen Ranking — https://screenranking.com',
+        });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+    }
+
+    downloadRankingImage(shareCard.blob, filename);
+    setNotice('Share card downloaded');
+  }, [shareCard, shareListName, sorterId]);
+
+  const downloadFullRanking = useCallback(async () => {
+    if (!state?.result || isCreatingFullRanking) return;
+    setIsCreatingFullRanking(true);
+    try {
+      const blob = await createFullRankingCard({
+        ranking: exportRanking,
+        listName: shareListName,
+        movieCount: movies.length,
+        decisionCount: state.decisions,
+      });
+      downloadRankingImage(blob, `screen-ranking-${sorterId}-complete.png`);
+      setNotice('Full ranking downloaded');
+    } catch {
+      setNotice('Could not create the full ranking image');
+    } finally {
+      setIsCreatingFullRanking(false);
+    }
+  }, [
+    exportRanking,
+    isCreatingFullRanking,
+    movies.length,
+    shareListName,
+    sorterId,
+    state,
+  ]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -702,8 +840,7 @@ export function MovieSorter({
   }
 
   if (state.result) {
-    const groups = buildResultGroups(state, byId);
-    const rankedMovies = groups.flatMap((group) =>
+    const rankedMovies = resultGroups.flatMap((group) =>
       group.movies.map((movie, movieIndex) => ({
         movie,
         rank: movieIndex === 0 ? String(group.rank) : '=',
@@ -737,11 +874,24 @@ export function MovieSorter({
             {movies.length} movies, ranked through {state.decisions} decisions.
           </p>
           <div className="results-actions">
-            <Button size="lg" onClick={copyRanking}>
-              Copy ranking
+            <Button size="lg" onClick={openShareCard}>
+              <Share2 aria-hidden="true" /> Share Top 20
             </Button>
-            <Button size="lg" variant="outline" onClick={reset}>
-              Start over
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={downloadFullRanking}
+              disabled={isCreatingFullRanking}
+            >
+              {isCreatingFullRanking ? (
+                <Spinner aria-hidden="true" />
+              ) : (
+                <Download aria-hidden="true" />
+              )}
+              {isCreatingFullRanking ? 'Creating image…' : 'Download full list'}
+            </Button>
+            <Button size="lg" variant="ghost" onClick={copyRanking}>
+              Copy as text
             </Button>
           </div>
         </section>
@@ -789,6 +939,48 @@ export function MovieSorter({
             <RotateCcw aria-hidden="true" /> New sort
           </Button>
         </footer>
+
+        <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+          <DialogContent className="share-card-dialog">
+            <DialogHeader>
+              <DialogTitle>Your Top 20</DialogTitle>
+              <DialogDescription>
+                A story-sized card with your top five posters and the rest of
+                your top twenty.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="share-card-preview" aria-live="polite">
+              {shareCard ? (
+                <Image
+                  src={shareCard.previewUrl}
+                  alt={`Share card preview for ${shareListName}`}
+                  width={1080}
+                  height={1920}
+                  unoptimized
+                />
+              ) : (
+                <div className="share-card-loading">
+                  <Spinner aria-hidden="true" />
+                  <span>Creating your card…</span>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter className="share-card-actions">
+              <Button
+                variant="outline"
+                onClick={downloadShareCard}
+                disabled={!shareCard}
+              >
+                <Download aria-hidden="true" /> Download
+              </Button>
+              <Button onClick={sharePreparedCard} disabled={!shareCard}>
+                <Share2 aria-hidden="true" /> Share image
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         {notice && <output className="toast">{notice}</output>}
       </main>
     );
