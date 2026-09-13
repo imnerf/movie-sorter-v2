@@ -161,7 +161,7 @@ export default function ScreenRankingHome() {
         <div className="sorter-shelf" aria-label="Available ranking games">
           <a
             className="sorter-tile sorter-tile--active"
-            href={`${ASSET_PREFIX}/movies/nerfs-list/`}
+            href={`${ASSET_PREFIX}/movies/nerfs-list`}
           >
             <div className="sorter-tile-topline">
               <span>Now playing</span>
