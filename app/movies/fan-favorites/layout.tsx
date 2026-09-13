@@ -16,7 +16,7 @@ export const metadata: Metadata = {
       'Rank 90 modern favorites, blockbusters, enduring classics, and widely loved movies through head-to-head choices.',
     images: [
       {
-        url: '/social/og-fan-favorites.png',
+        url: '/social/og-fan-favorites-v2.png',
         width: 1200,
         height: 630,
         alt: 'Fan Favorites — 90 Movies. One Ranking.',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'Fan Favorites — Screen Ranking',
     description:
       'Rank 90 modern favorites, blockbusters, enduring classics, and widely loved movies through head-to-head choices.',
-    images: ['/social/og-fan-favorites.png'],
+    images: ['/social/og-fan-favorites-v2.png'],
   },
 };
 

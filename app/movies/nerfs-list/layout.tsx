@@ -5,21 +5,21 @@ export const metadata: Metadata = {
   description:
     'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
   alternates: {
-    canonical: '/movies/cinephile-140',
+    canonical: '/movies/nerfs-list',
   },
   openGraph: {
     type: 'website',
-    url: '/movies/cinephile-140',
+    url: '/movies/nerfs-list',
     siteName: 'Screen Ranking',
     title: 'Nerf’s Movie List — Screen Ranking',
     description:
       'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
     images: [
       {
-        url: '/social/og-nerfs-movie-list.png',
+        url: '/social/og-nerfs-movie-list-v2.png',
         width: 1200,
         height: 630,
-        alt: 'Nerf’s Movie List — 140 Films. A Personal Canon.',
+        alt: 'Nerf’s Movie List — 130 Films. A Personal Canon.',
       },
     ],
   },
@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     title: 'Nerf’s Movie List — Screen Ranking',
     description:
       'Rank Nerf’s personal pool of 130 modern favorites, international landmarks, and established classics through head-to-head choices.',
-    images: ['/social/og-nerfs-movie-list.png'],
+    images: ['/social/og-nerfs-movie-list-v2.png'],
   },
 };
 
-export default function CinephileSorterLayout({
+export default function NerfsListLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

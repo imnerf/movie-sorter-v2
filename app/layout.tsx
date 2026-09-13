@@ -18,7 +18,7 @@ export const metadata: Metadata = {
       'Head-to-head sorting games for movies, television, and everything worth ranking.',
     images: [
       {
-        url: '/social/og-home.png',
+        url: '/social/og-home-v2.png',
         width: 1200,
         height: 630,
         alt: 'Screen Ranking — Make the List Yours',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title: 'Screen Ranking — Make the List Yours',
     description:
       'Head-to-head sorting games for movies, television, and everything worth ranking.',
-    images: ['/social/og-home.png'],
+    images: ['/social/og-home-v2.png'],
   },
 };
 

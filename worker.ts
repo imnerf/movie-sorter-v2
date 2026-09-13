@@ -153,6 +153,12 @@ const worker = {
     context: ExecutionContext,
   ) {
     const url = new URL(request.url);
+    if (
+      url.pathname === '/movies/cinephile-140' ||
+      url.pathname === '/movies/cinephile-140/'
+    ) {
+      return Response.redirect(new URL('/movies/nerfs-list/', url), 308);
+    }
     if (url.pathname === '/analytics/completions') {
       return handleAnalytics(request, workerEnv.DB);
     }

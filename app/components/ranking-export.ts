@@ -211,15 +211,37 @@ function drawPosterTile(
   context.fillStyle = shade;
   context.fillRect(x, y, width, height);
 
-  context.textAlign = 'left';
+  const rankLabel = String(item.rank).padStart(2, '0');
+  const badgeWidth = prominent ? 104 : 66;
+  const badgeHeight = prominent ? 62 : 42;
+  const badgeX = x + (prominent ? 20 : 14);
+  const badgeY = y + (prominent ? 20 : 14);
+  roundedRectPath(
+    context,
+    badgeX,
+    badgeY,
+    badgeWidth,
+    badgeHeight,
+    prominent ? 10 : 8,
+  );
+  context.fillStyle = 'rgba(17, 14, 14, 0.9)';
+  context.fill();
+  context.strokeStyle = 'rgba(230, 75, 66, 0.9)';
+  context.lineWidth = prominent ? 2.5 : 2;
+  context.stroke();
+
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
   context.fillStyle = COLORS.primary;
-  context.font = `400 ${prominent ? 68 : 38}px ${DISPLAY_FONT}`;
+  context.font = `400 ${prominent ? 42 : 27}px ${WORDMARK_FONT}`;
   context.fillText(
-    String(item.rank).padStart(2, '0'),
-    x + 22,
-    y + (prominent ? 70 : 45),
+    rankLabel,
+    badgeX + badgeWidth / 2,
+    badgeY + badgeHeight / 2 + 1,
   );
 
+  context.textAlign = 'left';
+  context.textBaseline = 'alphabetic';
   context.fillStyle = COLORS.foreground;
   context.font = `400 ${prominent ? 34 : 22}px ${DISPLAY_FONT}`;
   const titleY = y + height - (prominent ? 78 : 54);
@@ -279,14 +301,13 @@ function drawWordmark(
   context.fillStyle = COLORS.foreground;
   context.font = `400 ${31 * scale}px ${WORDMARK_FONT}`;
   context.fillText('SCREEN', x, y);
-  let cursor = x + context.measureText('SCREEN').width + 10 * scale;
+  let cursor = x + context.measureText('SCREEN').width + 9 * scale;
   context.fillStyle = COLORS.primary;
-  context.font = `400 ${42 * scale}px ${ITALIC_FONT}`;
-  context.fillText('/', cursor, y + 2 * scale);
+  context.font = `400 ${31 * scale}px ${WORDMARK_FONT}`;
+  context.fillText('/', cursor, y);
   cursor += context.measureText('/').width + 9 * scale;
   context.fillStyle = COLORS.foreground;
-  context.font = `italic ${43 * scale}px ${ITALIC_FONT}`;
-  context.fillText('Ranking', cursor, y + 1 * scale);
+  context.fillText('RANKING', cursor, y);
 }
 
 function drawHeader(
