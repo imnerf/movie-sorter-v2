@@ -7,7 +7,7 @@ import { recordCompletedRun, type CompletedRun } from './lib/analytics-db';
 type BattleChoice = {
   leftMovieId: string;
   rightMovieId: string;
-  result: 'left' | 'tie' | 'right';
+  result: 'left' | 'right' | 'unseen-left' | 'unseen-right' | 'unseen-both';
 };
 
 type Submission = {
@@ -19,6 +19,7 @@ type Submission = {
   movieCount: number;
   choices: BattleChoice[];
   ranking: string[];
+  unseen: string[];
 };
 
 const sorterMovies = {
@@ -56,7 +57,7 @@ function isUuid(value: unknown): value is string {
 function validateSubmission(value: unknown): value is Submission {
   if (!value || typeof value !== 'object') return false;
   const input = value as Partial<Submission>;
-  if (input.version !== 1 || !isUuid(input.runId)) return false;
+  if (input.version !== 2 || !isUuid(input.runId)) return false;
   if (
     input.sorterId !== 'nerfs-movie-list' &&
     input.sorterId !== 'fan-favorites'
@@ -72,15 +73,27 @@ function validateSubmission(value: unknown): value is Submission {
   }
 
   const validMovies = sorterMovies[input.sorterId];
+  if (!Array.isArray(input.ranking) || !Array.isArray(input.unseen)) {
+    return false;
+  }
+
+  const rankedMovies = new Set(input.ranking);
+  const unseenMovies = new Set(input.unseen);
+  const minimumDecisions =
+    Math.ceil(unseenMovies.size / 2) + Math.max(0, rankedMovies.size - 1);
+
   if (
     !Number.isInteger(input.decisionCount) ||
-    input.decisionCount! < validMovies.size - 1 ||
+    input.decisionCount! < minimumDecisions ||
     input.decisionCount! > 1200 ||
     input.movieCount !== validMovies.size ||
-    !Array.isArray(input.ranking) ||
-    input.ranking.length !== validMovies.size ||
-    new Set(input.ranking).size !== validMovies.size ||
+    rankedMovies.size !== input.ranking.length ||
+    unseenMovies.size !== input.unseen.length ||
+    rankedMovies.size + unseenMovies.size !== validMovies.size ||
     input.ranking.some((movieId) => !validMovies.has(movieId)) ||
+    input.unseen.some(
+      (movieId) => !validMovies.has(movieId) || rankedMovies.has(movieId),
+    ) ||
     !Array.isArray(input.choices) ||
     input.choices.length !== input.decisionCount
   ) {
@@ -96,7 +109,9 @@ function validateSubmission(value: unknown): value is Submission {
       choice.leftMovieId !== choice.rightMovieId &&
       (choice.result === 'left' ||
         choice.result === 'right' ||
-        choice.result === 'tie'),
+        choice.result === 'unseen-left' ||
+        choice.result === 'unseen-right' ||
+        choice.result === 'unseen-both'),
   );
 }
 

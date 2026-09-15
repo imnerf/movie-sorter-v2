@@ -3,7 +3,6 @@ import type { Movie } from '@/app/data/movies';
 export type ExportRankingItem = {
   movie: Movie;
   rank: number;
-  tied: boolean;
 };
 
 type LoadedPoster = {
@@ -255,11 +254,6 @@ function drawPosterTile(
     2,
   );
 
-  if (item.tied) {
-    context.fillStyle = COLORS.muted;
-    context.font = `700 ${prominent ? 17 : 13}px ${SANS_FONT}`;
-    context.fillText('TIED', x + 22, y + height - 24);
-  }
   context.restore();
 
   context.save();
@@ -314,7 +308,8 @@ function drawHeader(
   context: CanvasRenderingContext2D,
   width: number,
   listName: string,
-  movieCount: number,
+  rankedCount: number,
+  unseenCount: number,
   decisionCount: number,
   compact = false,
 ) {
@@ -327,8 +322,9 @@ function drawHeader(
   context.font = `700 ${compact ? 17 : 22}px ${SANS_FONT}`;
   context.fillText(listName.toUpperCase(), width - margin, compact ? 79 : 100);
   context.font = `500 ${compact ? 14 : 18}px ${SANS_FONT}`;
+  const unseenSummary = unseenCount ? ` · ${unseenCount} UNSEEN` : '';
   context.fillText(
-    `${movieCount} MOVIES · ${decisionCount} DECISIONS`,
+    `${rankedCount} RANKED${unseenSummary} · ${decisionCount} DECISIONS`,
     width - margin,
     compact ? 105 : 132,
   );
@@ -358,7 +354,7 @@ function drawListItem(
   context.textAlign = 'left';
   context.fillStyle = COLORS.primary;
   context.font = `400 ${fontSize + 3}px ${DISPLAY_FONT}`;
-  context.fillText(item.tied ? `T${item.rank}` : String(item.rank), x, y);
+  context.fillText(String(item.rank), x, y);
 
   context.fillStyle = COLORS.foreground;
   context.font = `400 ${fontSize}px ${DISPLAY_FONT}`;
@@ -421,14 +417,15 @@ async function readyFonts() {
 export async function createTopTwentyCard({
   ranking,
   listName,
-  movieCount,
+  unseenCount,
   decisionCount,
 }: {
   ranking: ExportRankingItem[];
   listName: string;
-  movieCount: number;
+  unseenCount: number;
   decisionCount: number;
 }) {
+  if (!ranking.length) throw new Error('A ranking is required');
   await readyFonts();
   const posters = await loadTopPosters(ranking);
   const canvas = document.createElement('canvas');
@@ -443,7 +440,8 @@ export async function createTopTwentyCard({
       context,
       canvas.width,
       listName,
-      movieCount,
+      ranking.length,
+      unseenCount,
       decisionCount,
       true,
     );
@@ -516,15 +514,16 @@ export async function createTopTwentyCard({
 
 export async function createFullRankingCard({
   ranking,
+  unseenMovies,
   listName,
-  movieCount,
   decisionCount,
 }: {
   ranking: ExportRankingItem[];
+  unseenMovies: Movie[];
   listName: string;
-  movieCount: number;
   decisionCount: number;
 }) {
+  if (!ranking.length) throw new Error('A ranking is required');
   await readyFonts();
   const posters = await loadTopPosters(ranking);
   const listItems = ranking.slice(5);
@@ -532,7 +531,10 @@ export async function createFullRankingCard({
   const rowsPerColumn = Math.ceil(listItems.length / columns);
   const rowHeight = 78;
   const listTop = 930;
-  const footerTop = listTop + rowsPerColumn * rowHeight + 70;
+  const unseenRows = Math.ceil(unseenMovies.length / columns);
+  const unseenSectionHeight = unseenMovies.length ? 90 + unseenRows * 58 : 0;
+  const unseenTop = listTop + rowsPerColumn * rowHeight + 55;
+  const footerTop = unseenTop + unseenSectionHeight + 35;
   const canvas = document.createElement('canvas');
   canvas.width = 1800;
   canvas.height = footerTop + 170;
@@ -541,7 +543,14 @@ export async function createFullRankingCard({
 
   try {
     drawBackground(context, canvas.width, canvas.height);
-    drawHeader(context, canvas.width, listName, movieCount, decisionCount);
+    drawHeader(
+      context,
+      canvas.width,
+      listName,
+      ranking.length,
+      unseenMovies.length,
+      decisionCount,
+    );
 
     const margin = 90;
     const gap = 18;
@@ -581,6 +590,34 @@ export async function createFullRankingCard({
         context.moveTo(x, y + 48);
         context.lineTo(x + columnWidth, y + 48);
         context.stroke();
+      });
+    }
+
+    if (unseenMovies.length) {
+      context.strokeStyle = COLORS.border;
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(margin, unseenTop);
+      context.lineTo(canvas.width - margin, unseenTop);
+      context.stroke();
+      context.fillStyle = COLORS.muted;
+      context.font = `700 21px ${SANS_FONT}`;
+      context.fillText(
+        `HAVEN’T SEEN · ${unseenMovies.length}`,
+        margin,
+        unseenTop + 52,
+      );
+
+      const unseenListTop = unseenTop + 105;
+      const unseenRowsPerColumn = Math.ceil(unseenMovies.length / columns);
+      unseenMovies.forEach((movie, index) => {
+        const column = Math.floor(index / unseenRowsPerColumn);
+        const row = index % unseenRowsPerColumn;
+        const x = margin + column * (columnWidth + columnGap);
+        const y = unseenListTop + row * 58;
+        context.fillStyle = COLORS.muted;
+        context.font = `400 25px ${DISPLAY_FONT}`;
+        drawWrappedText(context, movie.title, x, y, columnWidth, 28, 1);
       });
     }
 

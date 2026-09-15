@@ -1,7 +1,14 @@
+export type BattleResult =
+  | 'left'
+  | 'right'
+  | 'unseen-left'
+  | 'unseen-right'
+  | 'unseen-both';
+
 export type BattleChoice = {
   leftMovieId: string;
   rightMovieId: string;
-  result: 'left' | 'tie' | 'right';
+  result: BattleResult;
 };
 
 export type SortState = {
@@ -15,66 +22,9 @@ export type SortState = {
   merged: string[];
   decisions: number;
   choices: BattleChoice[];
-  ties: [string, string][];
+  unseen: string[];
   result: string[] | null;
 };
-
-type TieRootFinder = (id: string) => string;
-
-function createTieRootFinder(ties: [string, string][]): TieRootFinder {
-  const parent = new Map<string, string>();
-
-  const find = (id: string): string => {
-    const current = parent.get(id) ?? id;
-    if (current === id) return id;
-    const root = find(current);
-    parent.set(id, root);
-    return root;
-  };
-
-  for (const [leftId, rightId] of ties) {
-    const leftRoot = find(leftId);
-    const rightRoot = find(rightId);
-    if (leftRoot !== rightRoot) parent.set(rightRoot, leftRoot);
-  }
-
-  return find;
-}
-
-function getTieBlock(
-  run: string[],
-  startIndex: number,
-  findTieRoot: TieRootFinder,
-) {
-  const firstId = run[startIndex];
-  if (!firstId) return [];
-
-  const root = findTieRoot(firstId);
-  let endIndex = startIndex + 1;
-  while (endIndex < run.length && findTieRoot(run[endIndex]) === root) {
-    endIndex += 1;
-  }
-
-  return run.slice(startIndex, endIndex);
-}
-
-function countTieBlocks(
-  run: string[],
-  findTieRoot: TieRootFinder,
-  startIndex = 0,
-) {
-  let blocks = 0;
-  let index = startIndex;
-
-  while (index < run.length) {
-    const block = getTieBlock(run, index, findTieRoot);
-    if (!block.length) break;
-    blocks += 1;
-    index += block.length;
-  }
-
-  return blocks;
-}
 
 export function cloneState(state: SortState): SortState {
   return {
@@ -86,7 +36,7 @@ export function cloneState(state: SortState): SortState {
     right: state.right ? [...state.right] : null,
     merged: [...state.merged],
     choices: (state.choices ?? []).map((choice) => ({ ...choice })),
-    ties: (state.ties ?? []).map((pair) => [...pair] as [string, string]),
+    unseen: [...(state.unseen ?? [])],
     result: state.result ? [...state.result] : null,
   };
 }
@@ -94,7 +44,7 @@ export function cloneState(state: SortState): SortState {
 export function prepareNextPair(input: SortState): SortState {
   const state = cloneState(input);
 
-  while (!state.left && !state.result) {
+  while (!state.left && state.result === null) {
     if (state.pending.length >= 2) {
       state.left = state.pending[0];
       state.right = state.pending[1];
@@ -145,27 +95,22 @@ export function createSortState(ids: string[]): SortState {
     merged: [],
     decisions: 0,
     choices: [],
-    ties: [],
+    unseen: [],
     result: null,
   });
 }
 
-export function applyChoice(
-  input: SortState,
-  choice: 'left' | 'tie' | 'right',
-): SortState {
-  if (!input.left || !input.right || input.result) return input;
+export function applyChoice(input: SortState, choice: BattleResult): SortState {
+  if (!input.left || !input.right || input.result !== null) return input;
 
   const state = cloneState(input);
   const leftRun = state.left;
   const rightRun = state.right;
   if (!leftRun || !rightRun) return input;
 
-  const findTieRoot = createTieRootFinder(state.ties);
-  const leftBlock = getTieBlock(leftRun, state.leftIndex, findTieRoot);
-  const rightBlock = getTieBlock(rightRun, state.rightIndex, findTieRoot);
-  const leftId = leftBlock[0];
-  const rightId = rightBlock[0];
+  const leftId = leftRun[state.leftIndex];
+  const rightId = rightRun[state.rightIndex];
+  if (!leftId || !rightId) return input;
 
   state.choices.push({
     leftMovieId: leftId,
@@ -173,17 +118,23 @@ export function applyChoice(
     result: choice,
   });
 
-  if (choice === 'left' || choice === 'tie') {
-    state.merged.push(...leftBlock);
-    state.leftIndex += leftBlock.length;
+  if (choice === 'left') {
+    state.merged.push(leftId);
+    state.leftIndex += 1;
+  } else if (choice === 'right') {
+    state.merged.push(rightId);
+    state.rightIndex += 1;
+  } else {
+    if (choice === 'unseen-left' || choice === 'unseen-both') {
+      state.unseen.push(leftId);
+      state.leftIndex += 1;
+    }
+    if (choice === 'unseen-right' || choice === 'unseen-both') {
+      state.unseen.push(rightId);
+      state.rightIndex += 1;
+    }
   }
 
-  if (choice === 'right' || choice === 'tie') {
-    state.merged.push(...rightBlock);
-    state.rightIndex += rightBlock.length;
-  }
-
-  if (choice === 'tie') state.ties.push([leftId, rightId]);
   state.decisions += 1;
 
   const leftDone = state.leftIndex >= leftRun.length;
@@ -195,7 +146,7 @@ export function applyChoice(
       ...leftRun.slice(state.leftIndex),
       ...rightRun.slice(state.rightIndex),
     ];
-    state.built.push(completedRun);
+    if (completedRun.length) state.built.push(completedRun);
     state.left = null;
     state.right = null;
     state.leftIndex = 0;
@@ -208,46 +159,32 @@ export function applyChoice(
 }
 
 export function estimateRemainingComparisons(state: SortState) {
-  if (state.result) return 0;
+  if (state.result !== null) return 0;
 
-  const findTieRoot = createTieRootFinder(state.ties);
   let comparisons = 0;
-  const nextRound = state.built.map((run) => countTieBlocks(run, findTieRoot));
+  const nextRound = state.built.map((run) => run.length);
 
   if (state.left && state.right) {
-    const leftRemaining = countTieBlocks(
-      state.left,
-      findTieRoot,
-      state.leftIndex,
-    );
-    const rightRemaining = countTieBlocks(
-      state.right,
-      findTieRoot,
-      state.rightIndex,
-    );
+    const leftRemaining = state.left.length - state.leftIndex;
+    const rightRemaining = state.right.length - state.rightIndex;
     if (leftRemaining > 0 && rightRemaining > 0) {
       comparisons += leftRemaining + rightRemaining - 1;
     }
-    nextRound.push(
-      countTieBlocks(state.merged, findTieRoot) +
-        leftRemaining +
-        rightRemaining,
-    );
+    nextRound.push(state.merged.length + leftRemaining + rightRemaining);
   }
 
   for (let index = 0; index < state.pending.length; index += 2) {
-    const leftLength = countTieBlocks(state.pending[index], findTieRoot);
+    const leftLength = state.pending[index].length;
     const rightRun = state.pending[index + 1];
     if (!rightRun) {
       nextRound.push(leftLength);
     } else {
-      const rightLength = countTieBlocks(rightRun, findTieRoot);
-      comparisons += leftLength + rightLength - 1;
-      nextRound.push(leftLength + rightLength);
+      comparisons += leftLength + rightRun.length - 1;
+      nextRound.push(leftLength + rightRun.length);
     }
   }
 
-  let round = nextRound;
+  let round = nextRound.filter((length) => length > 0);
   while (round.length > 1) {
     const followingRound: number[] = [];
     for (let index = 0; index < round.length; index += 2) {
@@ -267,22 +204,8 @@ export function estimateRemainingComparisons(state: SortState) {
 }
 
 export function groupResultIds(state: SortState) {
-  const findTieRoot = createTieRootFinder(state.ties);
-  const groups: { rank: number; ids: string[] }[] = [];
-  let previousRoot: string | null = null;
-  let position = 1;
-
-  for (const id of state.result ?? []) {
-    const root = findTieRoot(id);
-    const currentGroup = groups[groups.length - 1];
-    if (currentGroup && root === previousRoot) {
-      currentGroup.ids.push(id);
-    } else {
-      groups.push({ rank: position, ids: [id] });
-    }
-    previousRoot = root;
-    position += 1;
-  }
-
-  return groups;
+  return (state.result ?? []).map((id, index) => ({
+    rank: index + 1,
+    ids: [id],
+  }));
 }

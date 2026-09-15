@@ -4,7 +4,7 @@ FROM analytics_runs
 GROUP BY sorter_id
 ORDER BY completed_sorts DESC;
 
--- Most battle wins. Ties are excluded from wins and losses.
+-- Most battle wins. Unseen actions are excluded from wins and losses.
 WITH battles AS (
   SELECT
     runs.sorter_id,

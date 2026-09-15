@@ -8,7 +8,7 @@ import {
   Check,
   Code,
   Download,
-  Equal,
+  EyeOff,
   ExternalLink,
   Film,
   Keyboard,
@@ -46,6 +46,7 @@ import {
   estimateRemainingComparisons,
   groupResultIds,
   prepareNextPair,
+  type BattleResult,
   type SortState,
 } from '@/app/components/sort-engine';
 
@@ -55,7 +56,7 @@ type BattleTransition = {
   id: number;
   left: Movie;
   right: Movie;
-  choice: 'left' | 'tie' | 'right';
+  choice: BattleResult;
 };
 
 type SavedSort = {
@@ -213,10 +214,13 @@ export function MovieSorter({
         group.movies.map((movie) => ({
           movie,
           rank: group.rank,
-          tied: group.movies.length > 1,
         })),
       ),
     [resultGroups],
+  );
+  const unseenMovies = useMemo(
+    () => (state?.unseen ?? []).flatMap((id) => byId.get(id) ?? []),
+    [byId, state?.unseen],
   );
   const shareListName =
     sorterId === 'fan-favorites' ? 'Fan Favorites' : "Nerf's Movie List";
@@ -281,7 +285,7 @@ export function MovieSorter({
   }, [dataVersion, saveKey]);
 
   const choose = useCallback(
-    (choice: 'left' | 'tie' | 'right') => {
+    (choice: BattleResult) => {
       if (!state || state.result) return;
 
       const now = performance.now();
@@ -340,17 +344,20 @@ export function MovieSorter({
 
   const copyRanking = useCallback(async () => {
     if (!state?.result) return;
-    const text = resultGroups
+    const rankedText = resultGroups
       .flatMap((group) =>
         group.movies.map((movie) => `${group.rank}. ${movie.title}`),
       )
       .join('\n');
-    await navigator.clipboard.writeText(text);
+    const unseenText = unseenMovies.length
+      ? `\n\nHaven’t seen\n${unseenMovies.map((movie) => `• ${movie.title}`).join('\n')}`
+      : '';
+    await navigator.clipboard.writeText(`${rankedText}${unseenText}`);
     setNotice('Ranking copied to clipboard');
-  }, [resultGroups, state]);
+  }, [resultGroups, state, unseenMovies]);
 
   const openShareCard = useCallback(async () => {
-    if (!state?.result) return;
+    if (!state?.result?.length) return;
     setShareDialogOpen(true);
     if (shareCard || isCreatingShareCard) return;
 
@@ -359,7 +366,7 @@ export function MovieSorter({
       const blob = await createTopTwentyCard({
         ranking: exportRanking,
         listName: shareListName,
-        movieCount: movies.length,
+        unseenCount: unseenMovies.length,
         decisionCount: state.decisions,
       });
       setShareCard({ blob, previewUrl: URL.createObjectURL(blob) });
@@ -372,10 +379,10 @@ export function MovieSorter({
   }, [
     exportRanking,
     isCreatingShareCard,
-    movies.length,
     shareCard,
     shareListName,
     state,
+    unseenMovies.length,
   ]);
 
   const downloadShareCard = useCallback(() => {
@@ -413,13 +420,13 @@ export function MovieSorter({
   }, [shareCard, shareListName, sorterId]);
 
   const downloadFullRanking = useCallback(async () => {
-    if (!state?.result || isCreatingFullRanking) return;
+    if (!state?.result?.length || isCreatingFullRanking) return;
     setIsCreatingFullRanking(true);
     try {
       const blob = await createFullRankingCard({
         ranking: exportRanking,
+        unseenMovies,
         listName: shareListName,
-        movieCount: movies.length,
         decisionCount: state.decisions,
       });
       downloadRankingImage(blob, `screen-ranking-${sorterId}-complete.png`);
@@ -432,10 +439,10 @@ export function MovieSorter({
   }, [
     exportRanking,
     isCreatingFullRanking,
-    movies.length,
     shareListName,
     sorterId,
     state,
+    unseenMovies,
   ]);
 
   useEffect(() => {
@@ -456,12 +463,22 @@ export function MovieSorter({
 
       if (state.result) return;
       const key = event.key.toLowerCase();
-      if (key === 'h' || event.key === 'ArrowLeft' || event.key === '1') {
+      if (event.shiftKey && key === 'h') {
+        event.preventDefault();
+        choose('unseen-left');
+      } else if (event.shiftKey && key === 'l') {
+        event.preventDefault();
+        choose('unseen-right');
+      } else if (
+        key === 'h' ||
+        event.key === 'ArrowLeft' ||
+        event.key === '1'
+      ) {
         event.preventDefault();
         choose('left');
       } else if (key === 'k' || event.key === 'ArrowUp' || event.key === '2') {
         event.preventDefault();
-        choose('tie');
+        choose('unseen-both');
       } else if (
         key === 'l' ||
         event.key === 'ArrowRight' ||
@@ -515,11 +532,20 @@ export function MovieSorter({
           name: 'choose_movie_in_current_battle',
           title: 'Choose a movie',
           description:
-            'Record a left, tie, or right choice for the visible movie battle.',
+            'Choose the left or right movie, or remove one or both unseen movies from the ranking.',
           inputSchema: {
             type: 'object',
             properties: {
-              choice: { type: 'string', enum: ['left', 'tie', 'right'] },
+              choice: {
+                type: 'string',
+                enum: [
+                  'left',
+                  'right',
+                  'unseen-left',
+                  'unseen-right',
+                  'unseen-both',
+                ],
+              },
             },
             required: ['choice'],
             additionalProperties: false,
@@ -530,8 +556,14 @@ export function MovieSorter({
               throw new Error('No active movie battle. Start a sort first.');
             }
             const value = (input as { choice?: unknown })?.choice;
-            if (value !== 'left' && value !== 'tie' && value !== 'right') {
-              throw new Error('Choice must be left, tie, or right.');
+            if (
+              value !== 'left' &&
+              value !== 'right' &&
+              value !== 'unseen-left' &&
+              value !== 'unseen-right' &&
+              value !== 'unseen-both'
+            ) {
+              throw new Error('Choice is not supported.');
             }
             choose(value);
             await new Promise<void>((resolve) =>
@@ -576,7 +608,7 @@ export function MovieSorter({
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
-            version: 1,
+            version: 2,
             runId: state.runId,
             sorterId,
             listVersion: dataVersion,
@@ -584,6 +616,7 @@ export function MovieSorter({
             movieCount: movies.length,
             choices: state.choices,
             ranking: state.result,
+            unseen: state.unseen,
           }),
           keepalive: true,
         });
@@ -650,8 +683,8 @@ export function MovieSorter({
               )}
             </div>
             <p className="hero-hint">
-              Pick the film you prefer. Tie films you love equally—or don’t
-              know.
+              Pick the film you prefer. Mark anything you haven’t seen and it
+              won’t be ranked.
             </p>
           </div>
 
@@ -664,7 +697,7 @@ export function MovieSorter({
           <div>
             <span>01</span>
             <h2>Make the call</h2>
-            <p>Choose left, right, or tie. There are no wrong answers.</p>
+            <p>Choose left or right. Remove unseen films with one tap.</p>
           </div>
           <div>
             <span>02</span>
@@ -674,7 +707,7 @@ export function MovieSorter({
           <div>
             <span>03</span>
             <h2>Get the list</h2>
-            <p>Finish with every film ranked from your favorite down.</p>
+            <p>Finish with every film you’ve seen ranked from favorite down.</p>
           </div>
         </section>
 
@@ -684,7 +717,7 @@ export function MovieSorter({
             <Kbd>H</Kbd> or <Kbd>←</Kbd> left
           </p>
           <p>
-            <Kbd>K</Kbd> or <Kbd>↑</Kbd> tie
+            <Kbd>K</Kbd> or <Kbd>↑</Kbd> haven’t seen either
           </p>
           <p>
             <Kbd>L</Kbd> or <Kbd>→</Kbd> right
@@ -740,7 +773,7 @@ export function MovieSorter({
               TMDB.
             </p>
           </div>
-          <p className="last-updated">Latest update · September 13, 2026</p>
+          <p className="last-updated">Latest update · September 15, 2026</p>
         </footer>
       </main>
     );
@@ -748,10 +781,9 @@ export function MovieSorter({
 
   if (state.result) {
     const rankedMovies = resultGroups.flatMap((group) =>
-      group.movies.map((movie, movieIndex) => ({
+      group.movies.map((movie) => ({
         movie,
-        rank: movieIndex === 0 ? String(group.rank) : '=',
-        tied: group.movies.length > 1,
+        rank: String(group.rank),
       })),
     );
     const showcaseMovies = rankedMovies.slice(0, 12);
@@ -778,17 +810,25 @@ export function MovieSorter({
           <p className="eyebrow">Your final ranking</p>
           <h1>A list worth arguing about.</h1>
           <p>
-            {movies.length} movies, ranked through {state.decisions} decisions.
+            {state.result.length} ranked
+            {state.unseen.length > 0
+              ? `, ${state.unseen.length} haven’t seen`
+              : ''}
+            , through {state.decisions} decisions.
           </p>
           <div className="results-actions">
-            <Button size="lg" onClick={openShareCard}>
+            <Button
+              size="lg"
+              onClick={openShareCard}
+              disabled={!state.result.length}
+            >
               <Share2 aria-hidden="true" /> Share Top 20
             </Button>
             <Button
               size="lg"
               variant="outline"
               onClick={downloadFullRanking}
-              disabled={isCreatingFullRanking}
+              disabled={isCreatingFullRanking || !state.result.length}
             >
               {isCreatingFullRanking ? (
                 <Spinner aria-hidden="true" />
@@ -805,7 +845,7 @@ export function MovieSorter({
 
         <section className="ranking-board" aria-label="Complete movie ranking">
           <ol className="ranking-showcase">
-            {showcaseMovies.map(({ movie, rank, tied }) => (
+            {showcaseMovies.map(({ movie, rank }) => (
               <li className="ranking-card" key={movie.id}>
                 <Image
                   src={movie.poster}
@@ -818,7 +858,6 @@ export function MovieSorter({
                 <div className="ranking-card-copy">
                   <span className="showcase-rank">{rank}</span>
                   <span className="showcase-title">{movie.title}</span>
-                  {tied && <span className="showcase-tie">Tie</span>}
                 </div>
               </li>
             ))}
@@ -826,14 +865,28 @@ export function MovieSorter({
 
           {remainingMovies.length > 0 && (
             <ol className="ranking-columns" start={13}>
-              {remainingMovies.map(({ movie, rank, tied }) => (
+              {remainingMovies.map(({ movie, rank }) => (
                 <li className="ranking-compact-row" key={movie.id}>
                   <span className="compact-rank">{rank}</span>
                   <span className="compact-title">{movie.title}</span>
-                  {tied && <span className="compact-tie">Tie</span>}
                 </li>
               ))}
             </ol>
+          )}
+
+          {unseenMovies.length > 0 && (
+            <section className="unseen-results" aria-labelledby="unseen-title">
+              <div className="unseen-results-heading">
+                <EyeOff aria-hidden="true" />
+                <h2 id="unseen-title">Haven’t seen</h2>
+                <span>{unseenMovies.length}</span>
+              </div>
+              <ul className="unseen-results-list">
+                {unseenMovies.map((movie) => (
+                  <li key={movie.id}>{movie.title}</li>
+                ))}
+              </ul>
+            </section>
           )}
         </section>
 
@@ -850,10 +903,12 @@ export function MovieSorter({
         <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
           <DialogContent className="share-card-dialog">
             <DialogHeader>
-              <DialogTitle>Your Top 20</DialogTitle>
+              <DialogTitle>
+                Your Top {Math.min(20, state.result.length)}
+              </DialogTitle>
               <DialogDescription>
-                A story-sized card with your top five posters and the rest of
-                your top twenty.
+                A story-sized card with your top posters and the rest of your
+                ranking, up to twenty.
               </DialogDescription>
             </DialogHeader>
 
@@ -960,41 +1015,63 @@ export function MovieSorter({
             className="battle-grid battle-grid-current"
             key={`${leftMovie.id}-${rightMovie.id}-${state.decisions}`}
           >
-            <Button
-              variant="outline"
-              className="movie-choice movie-choice-left"
-              onClick={() => choose('left')}
-              aria-label={`Choose ${leftMovie.title}`}
-            >
-              <Poster movie={leftMovie} priority />
-              <span className="choice-footer">
-                <span className="choice-title">{leftMovie.title}</span>
-                <span className="choice-key">
-                  <Kbd>H</Kbd>
-                  <ArrowLeft aria-hidden="true" />
+            <div className="movie-choice-stack movie-choice-stack-left">
+              <Button
+                variant="outline"
+                className="movie-choice movie-choice-left"
+                onClick={() => choose('left')}
+                aria-label={`Choose ${leftMovie.title}`}
+              >
+                <Poster movie={leftMovie} priority />
+                <span className="choice-footer">
+                  <span className="choice-title">{leftMovie.title}</span>
+                  <span className="choice-key">
+                    <Kbd>H</Kbd>
+                    <ArrowLeft aria-hidden="true" />
+                  </span>
                 </span>
-              </span>
-            </Button>
+              </Button>
+              <Button
+                variant="ghost"
+                className="unseen-movie-button"
+                onClick={() => choose('unseen-left')}
+                aria-label={`Mark ${leftMovie.title} as not seen`}
+              >
+                <EyeOff aria-hidden="true" /> Haven’t seen
+                <span className="unseen-key">⇧H</span>
+              </Button>
+            </div>
 
             <div className="versus-mark" aria-hidden="true">
               <span>or</span>
             </div>
 
-            <Button
-              variant="outline"
-              className="movie-choice movie-choice-right"
-              onClick={() => choose('right')}
-              aria-label={`Choose ${rightMovie.title}`}
-            >
-              <Poster movie={rightMovie} priority />
-              <span className="choice-footer">
-                <span className="choice-title">{rightMovie.title}</span>
-                <span className="choice-key">
-                  <ArrowRight aria-hidden="true" />
-                  <Kbd>L</Kbd>
+            <div className="movie-choice-stack movie-choice-stack-right">
+              <Button
+                variant="outline"
+                className="movie-choice movie-choice-right"
+                onClick={() => choose('right')}
+                aria-label={`Choose ${rightMovie.title}`}
+              >
+                <Poster movie={rightMovie} priority />
+                <span className="choice-footer">
+                  <span className="choice-title">{rightMovie.title}</span>
+                  <span className="choice-key">
+                    <ArrowRight aria-hidden="true" />
+                    <Kbd>L</Kbd>
+                  </span>
                 </span>
-              </span>
-            </Button>
+              </Button>
+              <Button
+                variant="ghost"
+                className="unseen-movie-button"
+                onClick={() => choose('unseen-right')}
+                aria-label={`Mark ${rightMovie.title} as not seen`}
+              >
+                <EyeOff aria-hidden="true" /> Haven’t seen
+                <span className="unseen-key">⇧L</span>
+              </Button>
+            </div>
           </div>
 
           {battleTransition && (
@@ -1027,11 +1104,11 @@ export function MovieSorter({
 
         <Button
           variant="outline"
-          className="tie-button"
-          onClick={() => choose('tie')}
+          className="unseen-both-button"
+          onClick={() => choose('unseen-both')}
         >
-          <Equal aria-hidden="true" />
-          Tie or haven’t seen both
+          <EyeOff aria-hidden="true" />
+          Haven’t seen either
           <Kbd>K</Kbd>
         </Button>
       </section>

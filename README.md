@@ -4,15 +4,16 @@ A clean, client-side movie ranking experience. Visitors choose between two films
 
 ## Updating the movie pool
 
-All movies live in one file: `app/data/movies.ts`.
+Nerf’s list lives in `app/data/movies.ts`; Fan Favorites lives in
+`app/data/popular-movies.ts`.
 
-Each entry needs only a title and a TMDB poster URL:
+Each entry needs an ID, title, year, and TMDB poster URL:
 
 ```ts
-{ name: "Movie title", img: "https://image.tmdb.org/t/p/w500/poster-path.jpg", opts: {} },
+{ id: "movie-title-2026", title: "Movie Title", year: 2026, poster: "https://image.tmdb.org/t/p/original/poster-path.jpg" },
 ```
 
-Add or remove entries in that array, then update `DATA_VERSION` in `app/page.tsx`. Changing the version prevents an older saved sort from being loaded against a different pool.
+Add or remove entries in that array, then update `dataVersion` on the relevant sorter page. Changing the version prevents an older saved sort from being loaded against a different pool.
 
 ## Local development
 
@@ -22,18 +23,15 @@ pnpm dev
 
 ## Publishing
 
-Pushes to `main` automatically build and deploy the site with GitHub Pages.
-The Pages build prefixes its static assets with `/movie-sorter-v2`; OpenAI
-Sites and local development continue to serve assets from `/`.
-
-A custom domain can be added later under **Repository settings → Pages**. Add
-the domain in GitHub before changing its DNS records, then enable HTTPS after
-the domain is verified.
+Pushes to `main` automatically deploy the canonical site at
+`https://screenranking.com` through Cloudflare. GitHub Pages remains available
+as a backup and prefixes its static assets with `/movie-sorter-v2`.
 
 ## Features
 
 - Head-to-head merge sorting
-- Tie handling
+- Individual and two-at-once “Haven’t seen” removal
+- Unique final ranks with a separate unseen list
 - Undo and automatic local progress saving
 - Keyboard and touch controls
 - Copyable final ranking

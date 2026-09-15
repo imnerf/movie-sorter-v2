@@ -9,7 +9,7 @@ export type CompletedRun = {
     leftMovieTitle: string;
     rightMovieId: string;
     rightMovieTitle: string;
-    result: 'left' | 'tie' | 'right';
+    result: 'left' | 'right' | 'unseen-left' | 'unseen-right' | 'unseen-both';
   }[];
   ranking: { movieId: string; movieTitle: string }[];
 };

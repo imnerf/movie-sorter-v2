@@ -1091,12 +1091,23 @@ a {
   animation: choice-recede 180ms ease-out forwards;
 }
 
-.battle-transition-tie .transition-left {
-  animation: tie-advance-left 180ms ease-out forwards;
+.battle-transition-unseen-left .transition-left,
+.battle-transition-unseen-right .transition-right,
+.battle-transition-unseen-both .transition-left,
+.battle-transition-unseen-both .transition-right {
+  animation: choice-recede 180ms ease-out forwards;
 }
 
-.battle-transition-tie .transition-right {
-  animation: tie-advance-right 180ms ease-out forwards;
+.battle-transition-unseen-left .transition-right,
+.battle-transition-unseen-right .transition-left {
+  animation: choice-hold 180ms ease-out forwards;
+}
+
+.movie-choice-stack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .battle-grid-transition .versus-mark {
@@ -1308,7 +1319,33 @@ a {
   font-style: italic;
 }
 
-.tie-button {
+.unseen-movie-button {
+  height: 2.35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+}
+
+.unseen-movie-button:hover,
+.unseen-movie-button:focus-visible {
+  border-color: var(--border);
+  background: color-mix(in oklch, var(--secondary), transparent 35%);
+  color: var(--foreground);
+}
+
+.unseen-movie-button svg {
+  width: 0.95rem;
+}
+
+.unseen-key {
+  margin-left: auto;
+  color: color-mix(in oklch, var(--muted-foreground), transparent 25%);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+}
+
+.unseen-both-button {
   height: 2.85rem;
   margin-top: 1rem;
   border-radius: 999px;
@@ -1316,7 +1353,7 @@ a {
   color: var(--muted-foreground);
 }
 
-.tie-button:hover {
+.unseen-both-button:hover {
   color: var(--foreground);
 }
 
@@ -1342,7 +1379,7 @@ a {
   }
 
   .battle-grid-wrap {
-    width: min(100%, 820px, max(500px, calc(150svh - 405px)));
+    width: min(100%, 780px, max(450px, calc(150svh - 450px)));
   }
 
   .choice-footer {
@@ -1350,7 +1387,7 @@ a {
     padding: 0.8rem 1rem;
   }
 
-  .tie-button {
+  .unseen-both-button {
     height: 2.65rem;
     margin-top: 0.75rem;
   }
@@ -1384,17 +1421,10 @@ a {
   }
 }
 
-@keyframes tie-advance-left {
+@keyframes choice-hold {
   to {
     opacity: 0;
-    transform: translateX(7px) scale(1.005);
-  }
-}
-
-@keyframes tie-advance-right {
-  to {
-    opacity: 0;
-    transform: translateX(-7px) scale(1.005);
+    transform: scale(0.995);
   }
 }
 
@@ -1556,13 +1586,6 @@ a {
   -webkit-line-clamp: 2;
 }
 
-.showcase-tie {
-  color: var(--muted-foreground);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .ranking-columns {
   column-count: 4;
   column-gap: 1.5rem;
@@ -1599,11 +1622,56 @@ a {
   text-overflow: ellipsis;
 }
 
-.compact-tie {
+.unseen-results {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.unseen-results-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   color: var(--muted-foreground);
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+}
+
+.unseen-results-heading svg {
+  width: 1rem;
+}
+
+.unseen-results-heading h2 {
+  color: var(--foreground);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.unseen-results-heading span {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+.unseen-results-list {
+  column-count: 4;
+  column-gap: 1.5rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  color: var(--muted-foreground);
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  line-height: 1.25;
+  list-style: none;
+}
+
+.unseen-results-list li {
+  break-inside: avoid;
+  border-bottom: 1px solid color-mix(in oklch, var(--border), transparent 35%);
+  padding: 0.45rem 0.2rem;
 }
 
 .share-card-dialog {
@@ -1950,10 +2018,20 @@ a {
     display: none;
   }
 
-  .tie-button {
+  .unseen-both-button {
     width: 100%;
     max-width: 360px;
     margin-top: 0.75rem;
+  }
+
+  .unseen-movie-button {
+    height: 2.25rem;
+    padding-inline: 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .unseen-key {
+    display: none;
   }
 
   .mobile-sort-tools {
@@ -2013,6 +2091,12 @@ a {
   .ranking-columns {
     column-count: 2;
     column-gap: 0.65rem;
+  }
+
+  .unseen-results-list {
+    column-count: 2;
+    column-gap: 0.75rem;
+    font-size: 0.78rem;
   }
 
   .ranking-compact-row {
