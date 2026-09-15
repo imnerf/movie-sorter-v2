@@ -383,7 +383,7 @@ a {
 
 .sorter-shelf {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 0.78fr;
   gap: 0.8rem;
   margin-top: clamp(3rem, 7vh, 5.5rem);
 }
@@ -433,6 +433,8 @@ a {
 }
 
 .sorter-tile--soon {
+  min-height: 235px;
+  align-self: center;
   color: rgb(245 237 226 / 58%);
 }
 
@@ -1694,7 +1696,13 @@ a {
 
   .sorter-tile--active {
     min-height: 230px;
+  }
+
+  .sorter-tile--soon {
+    width: calc(50% - 0.4rem);
+    min-height: 205px;
     grid-column: 1 / -1;
+    justify-self: center;
   }
 
   .home-hero {
@@ -1775,6 +1783,13 @@ a {
   .sorter-tile--active {
     min-height: 230px;
     grid-column: auto;
+  }
+
+  .sorter-tile--soon {
+    width: 100%;
+    min-height: 230px;
+    grid-column: auto;
+    justify-self: stretch;
   }
 
   .ranking-home-footer {
