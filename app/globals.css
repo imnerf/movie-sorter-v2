@@ -1322,6 +1322,38 @@ a {
   display: none;
 }
 
+@media (min-width: 761px) {
+  .battle-stage {
+    padding-block: clamp(0.9rem, 2vh, 1.5rem);
+  }
+
+  .battle-heading {
+    margin-bottom: clamp(0.75rem, 1.5vh, 1.15rem);
+  }
+
+  .battle-heading .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  .battle-heading h1 {
+    font-size: clamp(2rem, 3vw, 3.1rem);
+  }
+
+  .battle-grid-wrap {
+    width: min(100%, 820px, max(500px, calc(150svh - 405px)));
+  }
+
+  .choice-footer {
+    min-height: 4rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .tie-button {
+    height: 2.65rem;
+    margin-top: 0.75rem;
+  }
+}
+
 @keyframes matchup-arrive {
   from {
     opacity: 0.45;
